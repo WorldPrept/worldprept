@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import React from "react";
 
-const API = "https://api.anthropic.com/v1/messages";
+const API = "https://api.anthropic.com/v1/messages"; // direct (Claude sandbox)
+const API_PROXY = "/api/generate";                    // proxy (Vercel deployment)
+// Detect environment: Claude sandbox vs real deployment
+const USE_PROXY = typeof window !== "undefined" &&
+  window.location.hostname !== "localhost" &&
+  !window.location.hostname.includes("claude") &&
+  !window.location.hostname.includes("anthropic") &&
+  window.location.hostname !== "";
 const AMZN = "worldprept-20";
 const VIATOR_URL = "https://www.viator.com/?m=63915&pid=P00303056&mcid=42383&medium=link";
 const VIATOR_SEARCH = "https://www.viator.com/searchResults/all?text=";
@@ -667,19 +674,24 @@ export default function WorldPrept() {
     if(!canSubmit){setError("Please select a trip type.");return;}
     setError(""); setScreen("loading"); setChecked({}); setOwned({});
     try {
-      const res=await fetch(API,{
-        method:"POST",
-        headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,system:buildPrompt({...form,duration:dur}),messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]}),
-      });
+      const endpoint = USE_PROXY ? API_PROXY : API;
+      const headers = USE_PROXY
+        ? { "Content-Type":"application/json" }
+        : { "Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true" };
+      const body = {
+        model:"claude-sonnet-4-20250514",
+        max_tokens:4000,
+        system:buildPrompt({...form,duration:dur}),
+        messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]
+      };
+      const res=await fetch(endpoint,{method:"POST",headers,body:JSON.stringify(body)});
       let data;
       try { data=await res.json(); } catch(e) { throw new Error("Server error — please try again."); }
-      // Handle specific API errors with user-friendly messages
       if(data.error) {
         const t=data.error.type||"";
         if(t==="rate_limit_error") throw new Error("Too many requests — please wait 30 seconds and try again.");
         if(t==="overloaded_error") throw new Error("AI is busy — please try again in a moment.");
-        if(t==="authentication_error") throw new Error("Authentication error — please refresh the page.");
+        if(t==="authentication_error") throw new Error("API key not configured. Check Vercel environment variables.");
         throw new Error(data.error.message||"API error — please try again.");
       }
       const raw=(data.content||[]).map(b=>b.text||"").join("");
