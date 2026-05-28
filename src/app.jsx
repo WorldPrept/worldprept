@@ -1,34 +1,26 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import React from "react";
+import DestinationSelector from "./DestinationSelector.jsx";
 
-const API = "https://api.anthropic.com/v1/messages"; // direct (Claude sandbox)
-const API_PROXY = "/api/generate";                    // proxy (Vercel deployment)
-// Detect environment: Claude sandbox vs real deployment
-const USE_PROXY = typeof window !== "undefined" &&
-  window.location.hostname !== "localhost" &&
-  !window.location.hostname.includes("claude") &&
-  !window.location.hostname.includes("anthropic") &&
-  window.location.hostname !== "";
+// Always use the server proxy — API key lives in Vercel env vars, never in browser
+const USE_PROXY = true;
+const API_PROXY = "/api/generate";
 const AMZN = "worldprept-20";
-const VIATOR_URL = "https://www.viator.com/?m=63915&pid=P00303056&mcid=42383&medium=link";
 const VIATOR_SEARCH = "https://www.viator.com/searchResults/all?text=";
 const VIATOR_PARAMS = "&m=63915&pid=P00303056&mcid=42383&medium=link";
 const BOOKING = "?aid=304142"; // update when Booking.com approves
 
-// ── Colors (no CSS vars in inline styles)
 const T = "#C4623A", TL = "#2C7873", INK = "#1A1410", INKL = "#4A3F35";
 const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,16,0.12)";
 
-// ── Insurance (World Nomads removed — application declined)
 const INS = [
   { id:"sw", name:"SafetyWing",   logo:"🌍", color:T,         badge:"Most Popular", desc:"~$42–$84/mo. Cancel anytime. Global medical cover.", quote:()=>`https://safetywing.com/?referenceID=26534800&utm_source=26534800&utm_medium=Ambassador` },
-  { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice",desc:"Strong family & cancellation plans. Major US insurer.",quote:(f)=>`https://www.allianztravelinsurance.com/buy/comboSearch.htm?travelersCount=${f.people}&depDate=${f.depDate}&retDate=${f.retDate}&destination=${encodeURIComponent(f.destination||"")}&src=worldprept` },
-  { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick", desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.",quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
+  { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice", desc:"Strong family & cancellation plans. Major US insurer.", quote:(f)=>`https://www.allianztravelinsurance.com/buy/comboSearch.htm?travelersCount=${f.people}&depDate=${f.depDate}&retDate=${f.retDate}&destination=${encodeURIComponent(f.destination||"")}&src=worldprept` },
+  { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
 ];
 
-// ── Gear
 const mk = (dp,price,emoji,name,brand,why) => ({ id:dp, url:`https://www.amazon.com/dp/${dp}?tag=${AMZN}`, price, emoji, name, brand, why });
-const GEAR_ADULT  = [
+const GEAR_ADULT = [
   mk("B01M0YHHCB","~$22","🧳","Packing Cubes","Bagail 6-Set","Compresses clothes. Eliminates suitcase chaos."),
   mk("B078PQDM2H","~$28","🔌","Universal Adapter","EPICKA","Works in 150+ countries. USB-A & USB-C."),
   mk("B09VPHVD96","~$60","⚡","Portable Charger","Anker 737 20000mAh","4–5 full phone charges. Never die at a gate."),
@@ -38,7 +30,7 @@ const GEAR_ADULT  = [
   mk("B01MXYVFNQ","~$14","🧴","Leak-Proof Bottles","Dot&Dot Silicone","Zero leaks. No exploded shampoo."),
   mk("B00J4AGQT2","~$12","⚖️","Luggage Scale","Freetoo Digital","Avoid overweight fees at check-in."),
 ];
-const GEAR_KIDS   = [
+const GEAR_KIDS = [
   mk("B01N5EHFOL","~$30","😴","Kids Travel Pillow","bcozzy Kids","Chin-support. Little heads stop drooping."),
   mk("B099H3WNNN","~$190","📱","Kids Fire Tablet","Amazon Fire HD 10","Kid-proof. Hours of content on planes."),
   mk("B07G3XG9GG","~$50","🎧","Kids Headphones","Puro Sound BT2200","Volume-limited 85dB. Protects hearing."),
@@ -48,7 +40,7 @@ const GEAR_KIDS   = [
   mk("B000GG0BNE","~$20","🩹","Kids First Aid Kit","Me4kidz Medibag","Child doses, bandages & antiseptic."),
   mk("B01NATHTU5","~$25","🦺","Toddler Harness","Trunki PaddlePak","Keeps toddlers close in busy airports."),
 ];
-const GEAR_GROUP  = [
+const GEAR_GROUP = [
   mk("B08XMQVJYP","~$180","🔊","Bluetooth Speaker","JBL Charge 5","Waterproof, 20hr battery."),
   mk("B00P936188","~$36","🔋","6-Port USB Charger","Anker 60W","6 devices from one plug."),
   mk("B07GBSH12V","~$10","🃏","Travel Card Game","Taco Cat Goat","Hilarious. Perfect for waits."),
@@ -57,6 +49,40 @@ const GEAR_COUPLE = [
   { id:"couple-pillow", url:`https://www.amazon.com/dp/B07BBGBKFQ?tag=${AMZN}`, price:"~$60×2", emoji:"💑", name:"2× Travel Pillows", brand:"Trtl Pillow ×2", why:"Both sleep comfortably on long-haul." },
   mk("B00MVKXOKY","~$24","👛","RFID Travel Wallets","Zoppen 2-Pack","RFID-blocking. Slim & matching."),
 ];
+
+// ── Trip-type specific gear (shown based on selected trip type for higher conversion)
+const GEAR_BY_TRIP = {
+  "Beach & Sun": [
+    { id:"beach-spf", url:`https://www.amazon.com/dp/B00F3JNW1U?tag=${AMZN}`, price:"~$13", emoji:"🧴", name:"Reef-Safe Sunscreen", brand:"Sun Bum SPF50", why:"Won't harm coral. Required in Hawaii & Mexico." },
+    { id:"beach-towel", url:`https://www.amazon.com/dp/B07P6MFNDV?tag=${AMZN}`, price:"~$16", emoji:"🏖️", name:"Microfiber Beach Towel", brand:"Wise Owl XL", why:"Sand-free, dries in minutes, packs tiny." },
+    { id:"beach-drybag", url:`https://www.amazon.com/dp/B07S3FMFRZ?tag=${AMZN}`, price:"~$20", emoji:"🤿", name:"Dry Bag 10L", brand:"Earth Pak Waterproof", why:"Keeps phone & wallet dry at the beach." },
+    { id:"beach-snorkel", url:`https://www.amazon.com/dp/B08CXQNRYK?tag=${AMZN}`, price:"~$25", emoji:"🥽", name:"Snorkel Set", brand:"Cozia Anti-Fog", why:"See reefs without renting overpriced gear." },
+  ],
+  "Skiing": [
+    { id:"ski-warmers", url:`https://www.amazon.com/dp/B07KXHTYJ5?tag=${AMZN}`, price:"~$12", emoji:"🧤", name:"Hand & Toe Warmers", brand:"HotHands 40-Pack", why:"Cheap warmth. Lasts 10 hours on the slopes." },
+    { id:"ski-socks", url:`https://www.amazon.com/dp/B07YYNFRZ8?tag=${AMZN}`, price:"~$30", emoji:"🧦", name:"Merino Ski Socks 3-Pack", brand:"Pure Athlete", why:"Warm, blister-free, wick sweat." },
+    { id:"ski-lipbalm", url:`https://www.amazon.com/dp/B00B7FX7QW?tag=${AMZN}`, price:"~$10", emoji:"💋", name:"SPF Lip Balm 4-Pack", brand:"Sun Bum SPF30", why:"Wind & sun protection at altitude." },
+    { id:"ski-goggles", url:`https://www.amazon.com/dp/B08T7HBQS3?tag=${AMZN}`, price:"~$45", emoji:"🥽", name:"Ski Goggles Anti-Fog", brand:"OutdoorMaster OTG", why:"Fits over glasses. UV400 protection." },
+  ],
+  "Hiking & Adventure": [
+    { id:"hike-filter", url:`https://www.amazon.com/dp/B00FA8RHQK?tag=${AMZN}`, price:"~$30", emoji:"💧", name:"Water Filter Straw", brand:"LifeStraw Original", why:"Drink from any stream. Trail essential." },
+    { id:"hike-blister", url:`https://www.amazon.com/dp/B001949TKS?tag=${AMZN}`, price:"~$15", emoji:"🩹", name:"Blister Plasters", brand:"Compeed Pack", why:"Saves your feet on long hikes." },
+    { id:"hike-headlamp", url:`https://www.amazon.com/dp/B07THLR2YL?tag=${AMZN}`, price:"~$28", emoji:"🔦", name:"Rechargeable Headlamp", brand:"Foxelli USB", why:"Hands-free light for dawn starts & caves." },
+    { id:"hike-poles", url:`https://www.amazon.com/dp/B07VLR5Q4G?tag=${AMZN}`, price:"~$36", emoji:"🥾", name:"Trekking Poles Pair", brand:"TrailBuddy Aluminum", why:"Save your knees on steep descents." },
+  ],
+  "Business": [
+    { id:"biz-garment", url:`https://www.amazon.com/dp/B07ZPML7NP?tag=${AMZN}`, price:"~$30", emoji:"👔", name:"Garment Folder", brand:"Eagle Creek Pack-It", why:"Suits & shirts arrive wrinkle-free." },
+    { id:"biz-steamer", url:`https://www.amazon.com/dp/B00EZUR2T0?tag=${AMZN}`, price:"~$50", emoji:"🧖", name:"Portable Steamer", brand:"Conair Travel", why:"Smooths shirts in minutes in any hotel." },
+    { id:"biz-sleeve", url:`https://www.amazon.com/dp/B07RTX5F8B?tag=${AMZN}`, price:"~$20", emoji:"💼", name:"Laptop Sleeve", brand:"tomtoc 360 Protective", why:"Drop-proof protection for your work laptop." },
+    { id:"biz-powerstrip", url:`https://www.amazon.com/dp/B083KBQML4?tag=${AMZN}`, price:"~$28", emoji:"🔌", name:"Travel Power Strip", brand:"NTONPOWER USB", why:"Charge laptop + 3 devices from one outlet." },
+  ],
+  "Cruise": [
+    { id:"cruise-hooks", url:`https://www.amazon.com/dp/B00B7FX7QX?tag=${AMZN}`, price:"~$10", emoji:"🧲", name:"Magnetic Cabin Hooks", brand:"6-Pack Heavy Duty", why:"Cabin walls are metal — instant storage." },
+    { id:"cruise-organizer", url:`https://www.amazon.com/dp/B07PHFFKKL?tag=${AMZN}`, price:"~$18", emoji:"🚪", name:"Over-Door Organizer", brand:"Simple Houseware", why:"Doubles your tiny cabin storage." },
+    { id:"cruise-wine", url:`https://www.amazon.com/dp/B003ZUXGEY?tag=${AMZN}`, price:"~$12", emoji:"🍷", name:"Wine Bottle Protector", brand:"WineSkin 4-Pack", why:"Bring bottles home without leaks." },
+    { id:"cruise-bands", url:`https://www.amazon.com/dp/B01N6S8YHV?tag=${AMZN}`, price:"~$15", emoji:"💊", name:"Motion Sickness Bands", brand:"Sea-Band Adult", why:"Drug-free relief for rough seas." },
+  ],
+};
 
 const ALERT_TYPES = [
   { id:"weather", emoji:"🌦️", label:"Weather Updates",     desc:"Forecasts & packing tweaks" },
@@ -88,11 +114,10 @@ const PEOPLE_OPTS = ["1","2","3","4","5","6+"];
 const KIDS_OPTS   = ["No kids","1 child","2 children","3+ children"];
 const INIT_FORM   = { destination:"", depDate:"", retDate:"", duration:"", tripType:"", activities:"", people:"1", kids:"No kids", luggage:"carry_checked" };
 
-// ── Helpers
-const today      = () => new Date().toISOString().split("T")[0];
-const nights     = (a,b) => !a||!b?0:Math.max(0,Math.round((new Date(b)-new Date(a))/86400000));
-const fmt        = (d) => !d?"":new Date(d+"T00:00:00").toLocaleDateString("en",{month:"short",day:"numeric"});
-const durStr     = (n) => n<=0?"":n<=3?"1–3 days":n<=7?"4–7 days":n<=14?"1–2 weeks":n<=28?"2–4 weeks":"1+ month";
+const today  = () => new Date().toISOString().split("T")[0];
+const nights = (a,b) => !a||!b?0:Math.max(0,Math.round((new Date(b)-new Date(a))/86400000));
+const fmt    = (d) => !d?"":new Date(d+"T00:00:00").toLocaleDateString("en",{month:"short",day:"numeric"});
+const durStr = (n) => n<=0?"":n<=3?"1–3 days":n<=7?"4–7 days":n<=14?"1–2 weeks":n<=28?"2–4 weeks":"1+ month";
 const getInsIds = (txt) => INS.filter(p=>txt.toLowerCase().includes(p.name.toLowerCase())).map(p=>p.id);
 
 function actLinks(dest) {
@@ -131,7 +156,6 @@ function buildShareText(form, packingText, checked) {
   return `✈️ WorldPrept — ${form.destination}\n${fmt(form.depDate)} – ${fmt(form.retDate)} | ${form.tripType}\n${rows.join("\n")}\n\nBuilt with WorldPrept`;
 }
 
-// ── Prompt
 function buildPrompt(form) {
   const adults  = parseInt(form.people)||1;
   const hasKids = form.kids!=="No kids";
@@ -202,7 +226,6 @@ function parseAll(raw) {
   return { packing:get("PACKING"), insurance:get("INSURANCE"), events:get("EVENTS") };
 }
 
-// ── CSS
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -276,7 +299,6 @@ input:focus{border-color:#C4623A;box-shadow:0 0 0 3px rgba(196,98,58,0.09)}
 @media(max-width:420px){.g2{grid-template-columns:1fr 1fr}.lg-grid{grid-template-columns:1fr 1fr}.card,.panel{padding:16px}.tab{font-size:0.6rem;padding:8px 3px}.bar-btns{gap:4px}}
 `;
 
-// ── Step dots
 function Steps({ cur, total }) {
   return (
     <div style={{display:"flex",alignItems:"center",marginBottom:20}}>
@@ -292,7 +314,6 @@ function Steps({ cur, total }) {
   );
 }
 
-// ── Packing List
 function PackingList({ text, checked, setChecked, onShare }) {
   if (!text) return null;
   const allLines = text.split("\n");
@@ -305,7 +326,7 @@ function PackingList({ text, checked, setChecked, onShare }) {
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
             <div style={{display:"flex",alignItems:"center",gap:8}}>
               <span style={{fontSize:"0.64rem",fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",color:INKL}}>Progress</span>
-              <span style={{fontSize:"0.64rem",fontWeight:700,color:done===total?"#2C7873":INKL}}>{done===total&&total>0?"✓ All packed!": `${done}/${total}`}</span>
+              <span style={{fontSize:"0.64rem",fontWeight:700,color:done===total?"#2C7873":INKL}}>{done===total&&total>0?"✓ All packed!":`${done}/${total}`}</span>
             </div>
             <button onClick={onShare} style={{padding:"4px 10px",border:`1.5px solid ${BDR}`,borderRadius:100,background:SAND,color:INKL,fontSize:"0.65rem",fontWeight:700,cursor:"pointer"}}>📋 Save & share</button>
           </div>
@@ -345,7 +366,6 @@ function PackingList({ text, checked, setChecked, onShare }) {
   );
 }
 
-// ── Gear Card
 function GearCard({ item, owned, onToggle }) {
   const [hov,setHov]=useState(false);
   return (
@@ -369,16 +389,17 @@ function GearCard({ item, owned, onToggle }) {
   );
 }
 
-// ── Gear Section
 function GearSection({ form, owned, setOwned }) {
   const [expanded,setExpanded]=useState(false);
   const adults=parseInt(form.people)||1;
   const hasKids=form.kids!=="No kids";
   const isGroup=adults>=4;
   const isCpl=adults===2&&form.tripType==="Honeymoon";
+  const tripGear=GEAR_BY_TRIP[form.tripType]||null;
   const ownedCount=Object.values(owned).filter(Boolean).length;
   const secs=[
     {title:"✈️ Travel Essentials",items:GEAR_ADULT,show:true,accent:false},
+    {title:`🎯 ${form.tripType} Picks`,items:tripGear,show:!!tripGear,accent:true},
     {title:"👶 Kids Must-Haves",items:GEAR_KIDS,show:hasKids,accent:true},
     {title:"👥 Group Extras",items:GEAR_GROUP,show:isGroup,accent:false},
     {title:"💑 Couple Extras",items:GEAR_COUPLE,show:isCpl,accent:false},
@@ -390,7 +411,7 @@ function GearSection({ form, owned, setOwned }) {
           <p style={{fontSize:"0.63rem",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:INKL}}>⭐ Upgrade Your Trip</p>
           {ownedCount>0&&<span style={{fontSize:"0.6rem",color:"#2C7873",fontWeight:700}}>✓ {ownedCount} owned</span>}
         </div>
-        <span style={{fontSize:"0.65rem",color:INKL}}>{expanded?"Hide ▲":`Show gear ▼`}</span>
+        <span style={{fontSize:"0.65rem",color:INKL}}>{expanded?"Hide ▲":"Show gear ▼"}</span>
       </button>
       {expanded&&(
         <div>
@@ -410,7 +431,6 @@ function GearSection({ form, owned, setOwned }) {
   );
 }
 
-// ── Insurance View
 function InsuranceView({ text, recIds, form }) {
   if (!text) return null;
   const picked=INS.filter(p=>recIds.includes(p.id));
@@ -462,7 +482,6 @@ function InsuranceView({ text, recIds, form }) {
   );
 }
 
-// ── Aff Link Card
 function AffCard({ emoji, name, desc, url, color }) {
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="affcard"
@@ -478,7 +497,6 @@ function AffCard({ emoji, name, desc, url, color }) {
   );
 }
 
-// ── Events View
 function EventsView({ text, form }) {
   const [sub,setSub]=useState("guide");
   const aLinks=useMemo(()=>actLinks(form.destination),[form.destination]);
@@ -541,7 +559,6 @@ function EventsView({ text, form }) {
   );
 }
 
-// ── Share Modal
 function ShareModal({ text, onClose }) {
   const [copied,setCopied]=useState(false);
   const handleCopy=useCallback(async()=>{ const ok=await copyToClipboard(text); if(ok){setCopied(true);setTimeout(()=>setCopied(false),2500);} },[text]);
@@ -563,7 +580,6 @@ function ShareModal({ text, onClose }) {
   );
 }
 
-// ── Email Modal
 function EmailModal({ form:tf, onClose }) {
   const [email,setEmail]=useState(""); const [name,setName]=useState("");
   const [alerts,setAlerts]=useState(["weather","safety","events"]);
@@ -577,9 +593,7 @@ function EmailModal({ form:tf, onClose }) {
       const res=await fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,name,alerts,trip:tf})});
       await res.json();
     } catch(e){ console.error("Subscribe:",e); }
-    // Always complete — don't block user on email API failures
-    setLoading(false);
-    setDone(true);
+    setLoading(false); setDone(true);
   };
   const IS={padding:"11px 13px",border:`1.5px solid ${BDR}`,borderRadius:9,background:SAND,color:INK,fontFamily:"'DM Sans',sans-serif",fontSize:"16px",outline:"none",width:"100%"};
   return (
@@ -641,13 +655,11 @@ export default function WorldPrept() {
   const dotsRef=useRef(null); const progRef=useRef(null); const mountedRef=useRef(true);
 
   useEffect(()=>{ mountedRef.current=true; return()=>{ mountedRef.current=false; }; },[]);
-
   useEffect(()=>{
     if(screen==="loading") dotsRef.current=setInterval(()=>{ if(mountedRef.current) setDots(d=>d===3?1:d+1); },500);
     else clearInterval(dotsRef.current);
     return()=>clearInterval(dotsRef.current);
   },[screen]);
-
   useEffect(()=>{
     if(screen==="loading"){
       setProgress(0); let p=0;
@@ -655,7 +667,6 @@ export default function WorldPrept() {
     } else { clearInterval(progRef.current); if(screen==="results"&&mountedRef.current) setProgress(100); }
     return()=>clearInterval(progRef.current);
   },[screen]);
-
   useEffect(()=>{
     if(screen==="results"){ const t=setTimeout(()=>{ if(mountedRef.current&&!showEmail) setShowEmail(true); },7000); return()=>clearTimeout(t); }
   },[screen]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -663,7 +674,6 @@ export default function WorldPrept() {
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
   const n=nights(form.depDate,form.retDate);
   const dur=durStr(n);
-
   useEffect(()=>{ if(dur!==form.duration) set("duration",dur); },[dur]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const canStep1=form.destination.trim().length>=3;
@@ -674,17 +684,16 @@ export default function WorldPrept() {
     if(!canSubmit){setError("Please select a trip type.");return;}
     setError(""); setScreen("loading"); setChecked({}); setOwned({});
     try {
-      const endpoint = USE_PROXY ? API_PROXY : API;
-      const headers = USE_PROXY
-        ? { "Content-Type":"application/json" }
-        : { "Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true" };
-      const body = {
-        model:"claude-sonnet-4-20250514",
-        max_tokens:4000,
-        system:buildPrompt({...form,duration:dur}),
-        messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]
-      };
-      const res=await fetch(endpoint,{method:"POST",headers,body:JSON.stringify(body)});
+      const res=await fetch(API_PROXY,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:4000,
+          system:buildPrompt({...form,duration:dur}),
+          messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]
+        })
+      });
       let data;
       try { data=await res.json(); } catch(e) { throw new Error("Server error — please try again."); }
       if(data.error) {
@@ -706,15 +715,8 @@ export default function WorldPrept() {
   };
 
   const reset=()=>{setScreen("form");setStep(1);setForm(INIT_FORM);setResult({packing:"",insurance:"",events:""});setTab("packing");setShowEmail(false);setShowShare(false);setChecked({});setOwned({});setError("");};
-
-  const openShare=useCallback(()=>{
-    if(!result.packing) return;
-    setShareText(buildShareText(form,result.packing,checked));
-    setShowShare(true);
-  },[form,result.packing,checked]);
-
+  const openShare=useCallback(()=>{ if(!result.packing) return; setShareText(buildShareText(form,result.packing,checked)); setShowShare(true); },[form,result.packing,checked]);
   const handleFocus=(e)=>{ setTimeout(()=>e.target.scrollIntoView({behavior:"smooth",block:"center"}),300); };
-
   const insRec=result.insurance?getInsIds(result.insurance):[];
   const depL=fmt(form.depDate); const retL=fmt(form.retDate);
 
@@ -736,12 +738,16 @@ export default function WorldPrept() {
           </div>
           <div className="card">
             <Steps cur={step} total={3}/>
+
             {step===1&&(
               <div style={{animation:"fadeUp 0.25s ease"}}>
                 <p style={{fontFamily:"'Playfair Display',serif",fontSize:"1.05rem",fontWeight:700,color:INK,marginBottom:14}}>Where are you headed?</p>
                 <div className="fg">
-                  <label className="lbl">Destination</label>
-                  <input type="text" placeholder="Tokyo · Paris · Bali · Marrakech · Cape Town" value={form.destination} onFocus={handleFocus} onChange={e=>set("destination",e.target.value)} onKeyDown={e=>e.key==="Enter"&&canStep1&&setStep(2)}/>
+                  {/* ── Destination selector: country → (state if USA) → city */}
+                  <DestinationSelector
+                    value={form.destination}
+                    onChange={v=>set("destination",v)}
+                  />
                 </div>
                 <div className="fg">
                   <label className="lbl">Activities (optional)</label>
@@ -750,6 +756,7 @@ export default function WorldPrept() {
                 <button className="btn-main" disabled={!canStep1} onClick={()=>setStep(2)}>Continue →</button>
               </div>
             )}
+
             {step===2&&(
               <div style={{animation:"fadeUp 0.25s ease"}}>
                 <p style={{fontFamily:"'Playfair Display',serif",fontSize:"1.05rem",fontWeight:700,color:INK,marginBottom:14}}>When & who's coming?</p>
@@ -771,6 +778,7 @@ export default function WorldPrept() {
                 <button className="btn-back" onClick={()=>setStep(1)}>← Back</button>
               </div>
             )}
+
             {step===3&&(
               <div style={{animation:"fadeUp 0.25s ease"}}>
                 <p style={{fontFamily:"'Playfair Display',serif",fontSize:"1.05rem",fontWeight:700,color:INK,marginBottom:14}}>Luggage & trip style</p>
