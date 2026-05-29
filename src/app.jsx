@@ -50,40 +50,6 @@ const GEAR_COUPLE = [
   mk("B00MVKXOKY","~$24","👛","RFID Travel Wallets","Zoppen 2-Pack","RFID-blocking. Slim & matching."),
 ];
 
-// ── Trip-type specific gear (shown based on selected trip type for higher conversion)
-const GEAR_BY_TRIP = {
-  "Beach & Sun": [
-    { id:"beach-spf", url:`https://www.amazon.com/dp/B00F3JNW1U?tag=${AMZN}`, price:"~$13", emoji:"🧴", name:"Reef-Safe Sunscreen", brand:"Sun Bum SPF50", why:"Won't harm coral. Required in Hawaii & Mexico." },
-    { id:"beach-towel", url:`https://www.amazon.com/dp/B07P6MFNDV?tag=${AMZN}`, price:"~$16", emoji:"🏖️", name:"Microfiber Beach Towel", brand:"Wise Owl XL", why:"Sand-free, dries in minutes, packs tiny." },
-    { id:"beach-drybag", url:`https://www.amazon.com/dp/B07S3FMFRZ?tag=${AMZN}`, price:"~$20", emoji:"🤿", name:"Dry Bag 10L", brand:"Earth Pak Waterproof", why:"Keeps phone & wallet dry at the beach." },
-    { id:"beach-snorkel", url:`https://www.amazon.com/dp/B08CXQNRYK?tag=${AMZN}`, price:"~$25", emoji:"🥽", name:"Snorkel Set", brand:"Cozia Anti-Fog", why:"See reefs without renting overpriced gear." },
-  ],
-  "Skiing": [
-    { id:"ski-warmers", url:`https://www.amazon.com/dp/B07KXHTYJ5?tag=${AMZN}`, price:"~$12", emoji:"🧤", name:"Hand & Toe Warmers", brand:"HotHands 40-Pack", why:"Cheap warmth. Lasts 10 hours on the slopes." },
-    { id:"ski-socks", url:`https://www.amazon.com/dp/B07YYNFRZ8?tag=${AMZN}`, price:"~$30", emoji:"🧦", name:"Merino Ski Socks 3-Pack", brand:"Pure Athlete", why:"Warm, blister-free, wick sweat." },
-    { id:"ski-lipbalm", url:`https://www.amazon.com/dp/B00B7FX7QW?tag=${AMZN}`, price:"~$10", emoji:"💋", name:"SPF Lip Balm 4-Pack", brand:"Sun Bum SPF30", why:"Wind & sun protection at altitude." },
-    { id:"ski-goggles", url:`https://www.amazon.com/dp/B08T7HBQS3?tag=${AMZN}`, price:"~$45", emoji:"🥽", name:"Ski Goggles Anti-Fog", brand:"OutdoorMaster OTG", why:"Fits over glasses. UV400 protection." },
-  ],
-  "Hiking & Adventure": [
-    { id:"hike-filter", url:`https://www.amazon.com/dp/B00FA8RHQK?tag=${AMZN}`, price:"~$30", emoji:"💧", name:"Water Filter Straw", brand:"LifeStraw Original", why:"Drink from any stream. Trail essential." },
-    { id:"hike-blister", url:`https://www.amazon.com/dp/B001949TKS?tag=${AMZN}`, price:"~$15", emoji:"🩹", name:"Blister Plasters", brand:"Compeed Pack", why:"Saves your feet on long hikes." },
-    { id:"hike-headlamp", url:`https://www.amazon.com/dp/B07THLR2YL?tag=${AMZN}`, price:"~$28", emoji:"🔦", name:"Rechargeable Headlamp", brand:"Foxelli USB", why:"Hands-free light for dawn starts & caves." },
-    { id:"hike-poles", url:`https://www.amazon.com/dp/B07VLR5Q4G?tag=${AMZN}`, price:"~$36", emoji:"🥾", name:"Trekking Poles Pair", brand:"TrailBuddy Aluminum", why:"Save your knees on steep descents." },
-  ],
-  "Business": [
-    { id:"biz-garment", url:`https://www.amazon.com/dp/B07ZPML7NP?tag=${AMZN}`, price:"~$30", emoji:"👔", name:"Garment Folder", brand:"Eagle Creek Pack-It", why:"Suits & shirts arrive wrinkle-free." },
-    { id:"biz-steamer", url:`https://www.amazon.com/dp/B00EZUR2T0?tag=${AMZN}`, price:"~$50", emoji:"🧖", name:"Portable Steamer", brand:"Conair Travel", why:"Smooths shirts in minutes in any hotel." },
-    { id:"biz-sleeve", url:`https://www.amazon.com/dp/B07RTX5F8B?tag=${AMZN}`, price:"~$20", emoji:"💼", name:"Laptop Sleeve", brand:"tomtoc 360 Protective", why:"Drop-proof protection for your work laptop." },
-    { id:"biz-powerstrip", url:`https://www.amazon.com/dp/B083KBQML4?tag=${AMZN}`, price:"~$28", emoji:"🔌", name:"Travel Power Strip", brand:"NTONPOWER USB", why:"Charge laptop + 3 devices from one outlet." },
-  ],
-  "Cruise": [
-    { id:"cruise-hooks", url:`https://www.amazon.com/dp/B00B7FX7QX?tag=${AMZN}`, price:"~$10", emoji:"🧲", name:"Magnetic Cabin Hooks", brand:"6-Pack Heavy Duty", why:"Cabin walls are metal — instant storage." },
-    { id:"cruise-organizer", url:`https://www.amazon.com/dp/B07PHFFKKL?tag=${AMZN}`, price:"~$18", emoji:"🚪", name:"Over-Door Organizer", brand:"Simple Houseware", why:"Doubles your tiny cabin storage." },
-    { id:"cruise-wine", url:`https://www.amazon.com/dp/B003ZUXGEY?tag=${AMZN}`, price:"~$12", emoji:"🍷", name:"Wine Bottle Protector", brand:"WineSkin 4-Pack", why:"Bring bottles home without leaks." },
-    { id:"cruise-bands", url:`https://www.amazon.com/dp/B01N6S8YHV?tag=${AMZN}`, price:"~$15", emoji:"💊", name:"Motion Sickness Bands", brand:"Sea-Band Adult", why:"Drug-free relief for rough seas." },
-  ],
-};
-
 const ALERT_TYPES = [
   { id:"weather", emoji:"🌦️", label:"Weather Updates",     desc:"Forecasts & packing tweaks" },
   { id:"safety",  emoji:"🚨", label:"Safety Alerts",        desc:"Travel advisories & entry changes" },
@@ -395,11 +361,9 @@ function GearSection({ form, owned, setOwned }) {
   const hasKids=form.kids!=="No kids";
   const isGroup=adults>=4;
   const isCpl=adults===2&&form.tripType==="Honeymoon";
-  const tripGear=GEAR_BY_TRIP[form.tripType]||null;
   const ownedCount=Object.values(owned).filter(Boolean).length;
   const secs=[
     {title:"✈️ Travel Essentials",items:GEAR_ADULT,show:true,accent:false},
-    {title:`🎯 ${form.tripType} Picks`,items:tripGear,show:!!tripGear,accent:true},
     {title:"👶 Kids Must-Haves",items:GEAR_KIDS,show:hasKids,accent:true},
     {title:"👥 Group Extras",items:GEAR_GROUP,show:isGroup,accent:false},
     {title:"💑 Couple Extras",items:GEAR_COUPLE,show:isCpl,accent:false},
@@ -684,7 +648,7 @@ export default function WorldPrept() {
     if(!canSubmit){setError("Please select a trip type.");return;}
     setError(""); setScreen("loading"); setChecked({}); setOwned({});
     try {
-      const res=await fetch(API_PROXY,{
+      const res=await fetch("/api/generate",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
@@ -694,19 +658,33 @@ export default function WorldPrept() {
           messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]
         })
       });
-      let data;
-      try { data=await res.json(); } catch(e) { throw new Error("Server error — please try again."); }
-      if(data.error) {
-        const t=data.error.type||"";
-        if(t==="rate_limit_error") throw new Error("Too many requests — please wait 30 seconds and try again.");
-        if(t==="overloaded_error") throw new Error("AI is busy — please try again in a moment.");
-        if(t==="authentication_error") throw new Error("API key not configured. Check Vercel environment variables.");
-        throw new Error(data.error.message||"API error — please try again.");
+
+      // Read raw text first so we can show it if JSON parse fails
+      const rawText = await res.text();
+
+      // If not 200-299, show the HTTP status + first 200 chars of body
+      if(!res.ok){
+        const preview = rawText.slice(0,200);
+        throw new Error(`HTTP ${res.status} from /api/generate — ${preview}`);
       }
+
+      let data;
+      try { data=JSON.parse(rawText); }
+      catch(e){ throw new Error(`Response was not JSON (HTTP ${res.status}): ${rawText.slice(0,150)}`); }
+
+      if(data.error){
+        const t=data.error.type||"";
+        if(t==="rate_limit_error") throw new Error("Rate limit — wait 30 seconds and try again.");
+        if(t==="overloaded_error") throw new Error("Claude is busy — try again in a moment.");
+        if(t==="authentication_error") throw new Error("API key rejected — check ANTHROPIC_API_KEY in Vercel env vars.");
+        if(t==="invalid_request_error") throw new Error(`Invalid request: ${data.error.message}`);
+        throw new Error(`API error (${t||"unknown"}): ${data.error.message}`);
+      }
+
       const raw=(data.content||[]).map(b=>b.text||"").join("");
-      if(!raw) throw new Error("Empty response — please try again.");
+      if(!raw) throw new Error("Empty response from Claude — try again.");
       const parsed=parseAll(raw);
-      if(!parsed.packing) throw new Error("Incomplete response — please try again.");
+      if(!parsed.packing) throw new Error("Claude response missing packing section — try again.");
       if(mountedRef.current){setResult(parsed);setScreen("results");setTab("packing");}
     } catch(err){
       console.error("WorldPrept error:",err);
