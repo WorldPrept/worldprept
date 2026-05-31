@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
-import WorldPrept from './App.jsx'
+import WorldPrept from './app.jsx'
 import DestinationPage from './DestinationPage.jsx'
 
 // Renders the right destination page based on the URL, e.g. /pack/tokyo
