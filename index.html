@@ -1,13 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>WorldPrept — AI Travel Prep</title>
-<meta name="description" content="AI packing lists matched to real weather, travel insurance, local events and hotels worldwide."/>
-</head>
-<body>
-<div id="root"></div>
-<script type="module" src="/src/main.jsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Page title & SEO -->
+    <title>WorldPrept — AI Travel Packing Lists, Insurance & Local Guides</title>
+    <meta name="description" content="Free AI-built packing lists matched to real weather, plus travel insurance comparison, local events and hotels for any destination worldwide. No login, ready in 30 seconds." />
+
+    <!-- Social share preview (Open Graph) -->
+    <meta property="og:title" content="WorldPrept — Pack like you've been there before" />
+    <meta property="og:description" content="Free AI packing lists matched to real weather, plus insurance, events & hotels for anywhere on Earth." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://worldprept.com" />
+
+    <!-- Favicon (plane emoji, no image file needed) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>" />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPYNQT2PXQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZPYNQT2PXQ');
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

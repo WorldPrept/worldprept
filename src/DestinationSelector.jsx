@@ -1,14 +1,10 @@
-// DestinationSelector.jsx
-// Drop-in replacement for the destination text input in worldprept App.jsx
-// Usage: replace the destination <input> in step===1 with <DestinationSelector ... />
-//
-// Props:
-//   value    — current destination string (e.g. "Tokyo, Japan")
-//   onChange — called with new destination string
+// DestinationSelector.jsx — type-to-search version
+// Drop-in replacement. Same props: value, onChange
+// Users type a city or country and pick from live suggestions,
+// or type any destination freely if it's not in the list.
 
 import { useState, useRef, useEffect, useMemo } from "react";
 
-// ── Data
 const COUNTRIES = [
   { code:"AU", name:"Australia",       flag:"🇦🇺", cities:["Sydney","Melbourne","Brisbane","Perth","Adelaide","Gold Coast","Cairns","Darwin"] },
   { code:"AT", name:"Austria",         flag:"🇦🇹", cities:["Vienna","Salzburg","Innsbruck","Graz"] },
@@ -139,142 +135,127 @@ const US_STATES = [
 const T = "#C4623A", TL = "#2C7873", INK = "#1A1410", INKL = "#4A3F35";
 const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,16,0.12)";
 
-const sel = {
-  width:"100%", padding:"11px 13px",
-  border:`1.5px solid ${BDR}`, borderRadius:10,
-  background:SAND, color:INK,
-  fontFamily:"'DM Sans',sans-serif", fontSize:"16px",
-  outline:"none", appearance:"none", WebkitAppearance:"none",
-  backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234A3F35' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
-  backgroundRepeat:"no-repeat", backgroundPosition:"right 13px center",
-  cursor:"pointer", transition:"border-color 0.18s",
-};
-const selFocus = { borderColor:T, boxShadow:`0 0 0 3px rgba(196,98,58,0.09)` };
-
-function SelectBox({ value, onChange, children, placeholder }) {
-  const [focused, setFocused] = useState(false);
-  return (
-    <select
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-      style={{ ...sel, ...(focused ? selFocus : {}), color: value ? INK : "#9A8F85" }}
-    >
-      {placeholder && <option value="" disabled>{placeholder}</option>}
-      {children}
-    </select>
-  );
+// Build a flat searchable list of every destination once
+function buildIndex() {
+  const out = [];
+  COUNTRIES.forEach(c => {
+    if (c.code === "US") return; // handled via states below
+    if (c.cities) c.cities.forEach(city => out.push({ label:`${city}, ${c.name}`, flag:c.flag, search:`${city} ${c.name}`.toLowerCase() }));
+    out.push({ label:c.name, flag:c.flag, search:c.name.toLowerCase(), countryOnly:true });
+  });
+  US_STATES.forEach(s => {
+    if (s.cities) s.cities.forEach(city => out.push({ label:`${city}, ${s.name}, USA`, flag:"🇺🇸", search:`${city} ${s.name} usa united states`.toLowerCase() }));
+  });
+  return out;
 }
+const INDEX = buildIndex();
 
 export default function DestinationSelector({ value, onChange }) {
-  const [country, setCountry] = useState("");
-  const [state,   setState]   = useState("");
-  const [city,    setCity]    = useState("");
+  const [query, setQuery] = useState(value || "");
+  const [open, setOpen] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [hi, setHi] = useState(0); // highlighted index for keyboard nav
+  const boxRef = useRef(null);
 
-  // Parse back if value already set (e.g. form reset won't break)
+  // Keep query in sync if parent resets the form
+  useEffect(() => { if (!value) setQuery(""); }, [value]);
+
+  // Close dropdown when tapping outside
   useEffect(() => {
-    if (!value) { setCountry(""); setState(""); setCity(""); }
-  }, [value]);
+    const onDoc = (e) => { if (boxRef.current && !boxRef.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("touchstart", onDoc);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("touchstart", onDoc); };
+  }, []);
 
-  const selectedCountry = useMemo(() => COUNTRIES.find(c => c.code === country), [country]);
-  const isUSA = country === "US";
-  const selectedState = useMemo(() => isUSA ? US_STATES.find(s => s.code === state) : null, [isUSA, state]);
-
-  const cities = useMemo(() => {
-    if (isUSA) return selectedState?.cities || [];
-    return selectedCountry?.cities || [];
-  }, [isUSA, selectedCountry, selectedState]);
-
-  const handleCountry = (code) => {
-    setCountry(code);
-    setState("");
-    setCity("");
-    onChange("");
-  };
-
-  const handleState = (code) => {
-    setState(code);
-    setCity("");
-    onChange("");
-  };
-
-  const handleCity = (c) => {
-    setCity(c);
-    const countryName = selectedCountry?.name || "";
-    if (isUSA && selectedState) {
-      onChange(`${c}, ${selectedState.name}, USA`);
-    } else {
-      onChange(`${c}, ${countryName}`);
+  const matches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 1) return [];
+    const starts = [], contains = [];
+    for (const item of INDEX) {
+      const idx = item.search.indexOf(q);
+      if (idx === 0) starts.push(item);
+      else if (idx > 0) contains.push(item);
+      if (starts.length >= 8) break;
     }
+    return [...starts, ...contains].slice(0, 8);
+  }, [query]);
+
+  const pick = (item) => {
+    setQuery(item.label);
+    onChange(item.label);
+    setOpen(false);
+    setHi(0);
   };
 
-  const clearAll = () => {
-    setCountry(""); setState(""); setCity("");
-    onChange("");
+  const clearAll = () => { setQuery(""); onChange(""); setOpen(false); };
+
+  const onKey = (e) => {
+    if (!open || matches.length === 0) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); setHi(h => Math.min(h + 1, matches.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setHi(h => Math.max(h - 1, 0)); }
+    else if (e.key === "Enter") { e.preventDefault(); if (matches[hi]) pick(matches[hi]); }
+    else if (e.key === "Escape") { setOpen(false); }
+  };
+
+  const inputStyle = {
+    width:"100%", padding:"11px 13px", paddingRight: query ? "38px" : "13px",
+    border:`1.5px solid ${focused ? T : BDR}`, borderRadius:10,
+    background:SAND, color:INK, fontFamily:"'DM Sans',sans-serif", fontSize:"16px",
+    outline:"none", transition:"border-color 0.18s",
+    boxShadow: focused ? `0 0 0 3px rgba(196,98,58,0.09)` : "none",
   };
 
   return (
-    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+    <div ref={boxRef} style={{ position:"relative" }}>
+      <label style={{ display:"block", fontSize:"9px", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:INKL, marginBottom:5 }}>
+        Destination
+      </label>
 
-      {/* Country */}
-      <div>
-        <label style={{ display:"block", fontSize:"9px", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:INKL, marginBottom:5 }}>
-          Country
-        </label>
-        <SelectBox value={country} onChange={handleCountry} placeholder="Select a country…">
-          {COUNTRIES.map(c => (
-            <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
-          ))}
-        </SelectBox>
+      <div style={{ position:"relative" }}>
+        <input
+          type="text"
+          value={query}
+          placeholder="Type a city or country…"
+          onChange={e => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); setHi(0); }}
+          onFocus={() => { setFocused(true); setOpen(true); }}
+          onBlur={() => setFocused(false)}
+          onKeyDown={onKey}
+          autoComplete="off"
+          style={inputStyle}
+        />
+        {query && (
+          <button
+            onClick={clearAll}
+            aria-label="Clear"
+            style={{ position:"absolute", right:8, top:"50%", transform:"translateY(-50%)", width:24, height:24, border:"none", background:SANDD, borderRadius:"50%", cursor:"pointer", fontSize:"0.7rem", color:INKL, display:"flex", alignItems:"center", justifyContent:"center" }}
+          >✕</button>
+        )}
       </div>
 
-      {/* US State — only if USA selected */}
-      {isUSA && (
-        <div style={{ animation:"slideDown 0.18s ease" }}>
-          <label style={{ display:"block", fontSize:"9px", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:INKL, marginBottom:5 }}>
-            State
-          </label>
-          <SelectBox value={state} onChange={handleState} placeholder="Select a state…">
-            {US_STATES.map(s => (
-              <option key={s.code} value={s.code}>{s.name}</option>
-            ))}
-          </SelectBox>
+      {open && matches.length > 0 && (
+        <div style={{ position:"absolute", top:"100%", left:0, right:0, marginTop:4, background:CREAM, border:`1.5px solid ${BDR}`, borderRadius:11, boxShadow:"0 8px 30px rgba(26,20,16,0.13)", zIndex:50, overflow:"hidden", maxHeight:300, overflowY:"auto" }}>
+          {matches.map((item, i) => (
+            <button
+              key={item.label}
+              onMouseDown={(e) => { e.preventDefault(); pick(item); }}
+              onMouseEnter={() => setHi(i)}
+              style={{ width:"100%", display:"flex", alignItems:"center", gap:9, padding:"10px 13px", border:"none", background: i === hi ? "rgba(196,98,58,0.07)" : "transparent", cursor:"pointer", textAlign:"left", borderBottom: i < matches.length - 1 ? `1px solid rgba(26,20,16,0.06)` : "none" }}
+            >
+              <span style={{ fontSize:"1rem", flexShrink:0 }}>{item.flag}</span>
+              <span style={{ fontSize:"0.85rem", color:INK, fontWeight: item.countryOnly ? 700 : 400 }}>{item.label}</span>
+              {item.countryOnly && <span style={{ fontSize:"0.62rem", color:INKL, opacity:0.5, marginLeft:"auto" }}>anywhere</span>}
+            </button>
+          ))}
         </div>
       )}
 
-      {/* City — shows once country (and state if US) is chosen */}
-      {cities.length > 0 && (
-        <div style={{ animation:"slideDown 0.18s ease" }}>
-          <label style={{ display:"block", fontSize:"9px", fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:INKL, marginBottom:5 }}>
-            City / Destination
-          </label>
-          <SelectBox value={city} onChange={handleCity} placeholder="Select a city…">
-            {cities.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </SelectBox>
+      {open && query.trim().length >= 1 && matches.length === 0 && (
+        <div style={{ position:"absolute", top:"100%", left:0, right:0, marginTop:4, background:CREAM, border:`1.5px solid ${BDR}`, borderRadius:11, padding:"12px 14px", zIndex:50, boxShadow:"0 8px 30px rgba(26,20,16,0.13)" }}>
+          <p style={{ fontSize:"0.78rem", color:INK, marginBottom:2 }}>No match in our list — that's OK!</p>
+          <p style={{ fontSize:"0.7rem", color:INKL, lineHeight:1.5 }}>Just type your destination freely (e.g. "{query}") and we'll build your pack for it.</p>
         </div>
       )}
-
-      {/* Confirmation chip */}
-      {city && (
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", background:`rgba(44,120,115,0.08)`, border:`1px solid rgba(44,120,115,0.2)`, borderRadius:9, padding:"8px 12px", animation:"slideDown 0.18s ease" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-            <span style={{ fontSize:"1rem" }}>{selectedCountry?.flag}</span>
-            <span style={{ fontSize:"0.8rem", fontWeight:700, color:TL }}>{value}</span>
-          </div>
-          <button onClick={clearAll} style={{ background:"none", border:"none", cursor:"pointer", fontSize:"0.65rem", color:INKL, padding:"2px 6px", borderRadius:6, opacity:0.6 }}>✕ Clear</button>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes slideDown {
-          from { opacity:0; transform:translateY(-6px); }
-          to   { opacity:1; transform:translateY(0); }
-        }
-        select option { color: #1A1410; background: #FDFAF4; }
-      `}</style>
     </div>
   );
 }
