@@ -25,102 +25,72 @@ const INS = [
   { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
 ];
 
-const mk = (dp,price,emoji,name,brand,why) => ({ id:dp, url:`https://www.amazon.com/dp/${dp}?tag=${AMZN}`, price, emoji, name, brand, why });
-// ── All ASINs verified active May 2026
+// Search-based Amazon links — never break, and your affiliate tag still tracks every sale.
+// mk(id, searchTerms, price, emoji, name, brand, why)
+const amzSearch = (terms) => `https://www.amazon.com/s?k=${encodeURIComponent(terms)}&tag=${AMZN}`;
+const mk = (id,terms,price,emoji,name,brand,why) => ({ id, url:amzSearch(terms), price, emoji, name, brand, why });
 const GEAR_ADULT = [
-  // Packing cubes — BAGAIL 6-Set #1 best seller 2026 (30k+ orders/month)
-  mk("B08S35399Y","~$24","🧳","Packing Cubes 8-Set","BAGAIL Compression","#1 best seller. Compresses clothes, eliminates suitcase chaos."),
-  // Universal adapter — TESSAN 28W best seller 2026 (3 USB-C + 2 USB-A, 150+ countries)
-  mk("B07VSPNFKQ","~$26","🔌","Universal Travel Adapter","TESSAN 28W","3 USB-C + 2 USB-A. Works in 150+ countries."),
-  // Anker 20000mAh 87W — verified active ASIN, best seller power banks 2026
-  mk("B0CXDXP8VR","~$50","⚡","Portable Charger 20000mAh","Anker 87W Built-in Cable","Charges laptop + phone. 3-port 87W. Built-in USB-C cable."),
-  // Ostrichpillow Go — #1 rated neck pillow 2025–2026 per T+L and Resident
-  mk("B08KWGX8PR","~$60","😴","Neck Pillow","Ostrichpillow Go","Memory foam. Packs into its own pouch. Best-rated 2026."),
-  // Sony WH-1000XM6 — released 2025, current flagship
-  mk("B0D5LVB7TH","~$350","🎧","Noise-Cancelling Headphones","Sony WH-1000XM6","Best ANC available. 30hr battery. Foldable for travel."),
-  // TSA locks — Master Lock TSA approved, consistently best seller
-  mk("B00002N67X","~$18","🔒","TSA Luggage Locks 4-Pack","Master Lock","TSA-approved. Works on all checked bags."),
-  // Leak proof travel bottles — Matador FlatPak best seller 2025–2026
-  mk("B08M3LCJRB","~$28","🧴","Leak-Proof Travel Bottles","Matador FlatPak","Flat, roll-up silicone. Zero leaks. TSA-ready."),
-  // Luggage scale — Freetoo still active and best rated budget option
-  mk("B07D3PZK5P","~$14","⚖️","Digital Luggage Scale","Freetoo","Avoid $50 overweight fees. Reads in 1 second."),
-  // Apple AirTag — best seller luggage tracker 2026
-  mk("B0CX6CLQJL","~$29","📍","AirTag 4-Pack","Apple","Track every bag in real time. Never lose luggage again."),
-  // Kindle Paperwhite — best seller e-reader for travel 2026
-  mk("B09SWRYPB6","~$140","📚","Kindle Paperwhite","Amazon","3-month battery. Glare-free. 10M+ books on the go."),
+  mk("g-cubes","packing cubes set","~$22","🧳","Packing Cubes","Compression set","Compresses clothes. Eliminates suitcase chaos."),
+  mk("g-adapter","universal travel adapter","~$28","🔌","Universal Adapter","All-in-one","Works in 150+ countries. USB-A & USB-C."),
+  mk("g-charger","portable charger 20000mah","~$60","⚡","Portable Charger","High-capacity","4–5 full phone charges. Never die at a gate."),
+  mk("g-pillow","trtl travel neck pillow","~$60","😴","Travel Neck Pillow","Neck support","Real neck support. Transforms red-eye flights."),
+  mk("g-anc","noise cancelling headphones","~$280","🎧","Noise-Cancelling ANC","Over-ear","Best-in-class ANC. Long flights = bearable."),
+  mk("g-locks","tsa luggage locks","~$20","🔒","TSA Luggage Locks","4-pack","TSA-approved. Checked-bag peace of mind."),
+  mk("g-bottles","leak proof travel bottles","~$14","🧴","Leak-Proof Bottles","Silicone set","Zero leaks. No exploded shampoo."),
+  mk("g-scale","digital luggage scale","~$12","⚖️","Luggage Scale","Digital","Avoid overweight fees at check-in."),
 ];
-
 const GEAR_KIDS = [
-  // bcozzy kids pillow — still active, highly rated
-  mk("B01N5EHFOL","~$30","😴","Kids Travel Pillow","bcozzy Kids","Chin-support. Little heads stop drooping on flights."),
-  // Amazon Fire HD 10 Kids — 2023 model, active ASIN
-  mk("B09BG3TSBY","~$190","📱","Fire HD 10 Kids Tablet","Amazon","Kid-proof case. 12hr battery. Content on any flight."),
-  // Puro Sound kids headphones — volume-limited, consistently recommended
-  mk("B07G3XG9GG","~$50","🎧","Kids Headphones","Puro Sound BT2200","Volume-limited to 85dB. Protects developing hearing."),
-  // Skip Hop kids backpack — still active best seller
-  mk("B00BAOSFME","~$30","🎒","Kids Backpack","Skip Hop Zoo","Kids carry their own snacks and toys."),
-  // CeraVe kids sunscreen — current recommended kids SPF
-  mk("B09NWMCKVJ","~$14","☀️","Kids Sunscreen SPF 50","CeraVe Mineral","Mineral, fragrance-free, reef-safe. Vet-recommended."),
-  // Munchkin snack catchers — still best seller, active ASIN
-  mk("B000GW3YVI","~$16","🍎","Snack Catchers 2-Pack","Munchkin","Spill-proof rotating lid. Snacks stay fresh all trip."),
-  // Johnson & Johnson travel first aid kit
-  mk("B07VFBFS6X","~$25","🩹","Travel First Aid Kit","Johnson & Johnson","140-piece. Child doses & bandages included."),
-  // Trunki ride-on luggage — best seller kids travel 2026
-  mk("B000HA8RCI","~$60","🧳","Ride-On Kids Luggage","Trunki","Kids ride it through airports. 18L carry-on size."),
+  mk("k-pillow","kids travel neck pillow","~$30","😴","Kids Travel Pillow","Chin-support","Chin-support. Little heads stop drooping."),
+  mk("k-tablet","kids fire tablet","~$190","📱","Kids Fire Tablet","Kid-proof case","Kid-proof. Hours of content on planes."),
+  mk("k-headphones","kids volume limited headphones","~$50","🎧","Kids Headphones","Volume-limited","Volume-limited 85dB. Protects hearing."),
+  mk("k-backpack","kids travel backpack","~$30","🎒","Kids Backpack","Toddler size","Kids carry their own snacks."),
+  mk("k-spf","kids mineral sunscreen spf 50","~$15","☀️","Kids SPF 50+","Mineral, tear-free","Mineral, tear-free, reef-safe."),
+  mk("k-snacks","kids snack containers spill proof","~$18","🍎","Snack Containers","Spill-proof","Spill-proof. Snacks stay fresh."),
+  mk("k-firstaid","kids first aid kit","~$20","🩹","Kids First Aid Kit","Travel size","Child doses, bandages & antiseptic."),
+  mk("k-harness","toddler safety harness backpack","~$25","🦺","Toddler Harness","Leash backpack","Keeps toddlers close in busy airports."),
 ];
-
 const GEAR_GROUP = [
-  // JBL Charge 5 — still active, waterproof, 20hr battery
-  mk("B08VYBSQCX","~$160","🔊","Bluetooth Speaker","JBL Charge 5","IP67 waterproof. 20hr battery. Charges phones too."),
-  // Anker 60W 6-port charger — active best seller for groups
-  mk("B09KLMFKBJ","~$36","🔋","6-Port USB-C Charger","Anker 65W","Charges 6 devices from one outlet. Group essential."),
-  // Taco Cat Goat Cheese Pizza card game
-  mk("B07GBSH12V","~$10","🃏","Travel Card Game","Taco Cat Goat","Hilarious for all ages. Perfect for airports & waits."),
-  // Kasa smart power strip — great for hotel rooms with groups
-  mk("B07SXNRXSQ","~$28","🔌","Travel Power Strip","Kasa 3-Outlet","3 outlets + 4 USB. Everyone charges at once."),
+  mk("gr-speaker","waterproof bluetooth speaker","~$180","🔊","Bluetooth Speaker","Waterproof","Waterproof, 20hr battery."),
+  mk("gr-charger","multi port usb charger","~$36","🔋","6-Port USB Charger","Fast-charge","6 devices from one plug."),
+  mk("gr-game","travel card game","~$10","🃏","Travel Card Game","Party game","Hilarious. Perfect for waits."),
 ];
-
 const GEAR_COUPLE = [
-  // 2x Ostrichpillow Go for couples
-  { id:"couple-ostrich", url:`https://www.amazon.com/dp/B08KWGX8PR?tag=${AMZN}`, price:"~$60×2", emoji:"💑", name:"2× Neck Pillows", brand:"Ostrichpillow Go ×2", why:"Both sleep comfortably. Best-rated pillow 2026." },
-  // RFID wallets 2-pack — Travelambo still active best seller
-  mk("B01LW5SZ64","~$14","👛","RFID Slim Wallets 2-Pack","Travelambo","RFID-blocking. Slim, minimalist, matching pair."),
+  mk("c-pillow","travel neck pillow 2 pack","~$60×2","💑","2× Travel Pillows","Pair","Both sleep comfortably on long-haul."),
+  mk("c-wallet","rfid travel wallet 2 pack","~$24","👛","RFID Travel Wallets","Matching pair","RFID-blocking. Slim & matching."),
 ];
 
 // ── Trip-type specific gear (shown based on selected trip type for higher conversion)
 const GEAR_BY_TRIP = {
   "Beach & Sun": [
-    { id:"beach-spf", url:`https://www.amazon.com/dp/B00F3JNW1U?tag=${AMZN}`, price:"~$13", emoji:"🧴", name:"Reef-Safe Sunscreen", brand:"Sun Bum SPF50", why:"Won't harm coral. Required in Hawaii & Mexico." },
-    { id:"beach-towel", url:`https://www.amazon.com/dp/B07P6MFNDV?tag=${AMZN}`, price:"~$16", emoji:"🏖️", name:"Microfiber Beach Towel", brand:"Wise Owl XL", why:"Sand-free, dries in minutes, packs tiny." },
-    { id:"beach-drybag", url:`https://www.amazon.com/dp/B07S3FMFRZ?tag=${AMZN}`, price:"~$20", emoji:"🤿", name:"Dry Bag 10L", brand:"Earth Pak Waterproof", why:"Keeps phone & wallet dry at the beach." },
-    { id:"beach-snorkel", url:`https://www.amazon.com/dp/B08CXQNRYK?tag=${AMZN}`, price:"~$25", emoji:"🥽", name:"Snorkel Set", brand:"Cozia Anti-Fog", why:"See reefs without renting overpriced gear." },
+    mk("beach-spf","reef safe sunscreen spf 50","~$13","🧴","Reef-Safe Sunscreen","SPF50","Won't harm coral. Required in Hawaii & Mexico."),
+    mk("beach-towel","microfiber beach towel xl","~$16","🏖️","Microfiber Beach Towel","Sand-free","Sand-free, dries in minutes, packs tiny."),
+    mk("beach-drybag","waterproof dry bag 10l","~$20","🤿","Dry Bag 10L","Waterproof","Keeps phone & wallet dry at the beach."),
+    mk("beach-snorkel","snorkel set anti fog","~$25","🥽","Snorkel Set","Anti-fog","See reefs without renting overpriced gear."),
   ],
   "Skiing": [
-    { id:"ski-warmers", url:`https://www.amazon.com/dp/B07KXHTYJ5?tag=${AMZN}`, price:"~$12", emoji:"🧤", name:"Hand & Toe Warmers", brand:"HotHands 40-Pack", why:"Cheap warmth. Lasts 10 hours on the slopes." },
-    { id:"ski-socks", url:`https://www.amazon.com/dp/B07YYNFRZ8?tag=${AMZN}`, price:"~$30", emoji:"🧦", name:"Merino Ski Socks 3-Pack", brand:"Pure Athlete", why:"Warm, blister-free, wick sweat." },
-    { id:"ski-lipbalm", url:`https://www.amazon.com/dp/B00B7FX7QW?tag=${AMZN}`, price:"~$10", emoji:"💋", name:"SPF Lip Balm 4-Pack", brand:"Sun Bum SPF30", why:"Wind & sun protection at altitude." },
-    { id:"ski-goggles", url:`https://www.amazon.com/dp/B08T7HBQS3?tag=${AMZN}`, price:"~$45", emoji:"🥽", name:"Ski Goggles Anti-Fog", brand:"OutdoorMaster OTG", why:"Fits over glasses. UV400 protection." },
+    mk("ski-warmers","hand toe warmers","~$12","🧤","Hand & Toe Warmers","40-pack","Cheap warmth. Lasts 10 hours on the slopes."),
+    mk("ski-socks","merino wool ski socks","~$30","🧦","Merino Ski Socks 3-Pack","Warm","Warm, blister-free, wick sweat."),
+    mk("ski-lipbalm","spf lip balm","~$10","💋","SPF Lip Balm 4-Pack","SPF30","Wind & sun protection at altitude."),
+    mk("ski-goggles","ski goggles anti fog otg","~$45","🥽","Ski Goggles Anti-Fog","Fits over glasses","Fits over glasses. UV400 protection."),
   ],
   "Hiking & Adventure": [
-    { id:"hike-filter", url:`https://www.amazon.com/dp/B00FA8RHQK?tag=${AMZN}`, price:"~$30", emoji:"💧", name:"Water Filter Straw", brand:"LifeStraw Original", why:"Drink from any stream. Trail essential." },
-    { id:"hike-blister", url:`https://www.amazon.com/dp/B001949TKS?tag=${AMZN}`, price:"~$15", emoji:"🩹", name:"Blister Plasters", brand:"Compeed Pack", why:"Saves your feet on long hikes." },
-    { id:"hike-headlamp", url:`https://www.amazon.com/dp/B07THLR2YL?tag=${AMZN}`, price:"~$28", emoji:"🔦", name:"Rechargeable Headlamp", brand:"Foxelli USB", why:"Hands-free light for dawn starts & caves." },
-    { id:"hike-poles", url:`https://www.amazon.com/dp/B07VLR5Q4G?tag=${AMZN}`, price:"~$36", emoji:"🥾", name:"Trekking Poles Pair", brand:"TrailBuddy Aluminum", why:"Save your knees on steep descents." },
+    mk("hike-filter","lifestraw water filter","~$30","💧","Water Filter Straw","Personal","Drink from any stream. Trail essential."),
+    mk("hike-blister","blister plasters","~$15","🩹","Blister Plasters","Hydrocolloid","Saves your feet on long hikes."),
+    mk("hike-headlamp","rechargeable headlamp","~$28","🔦","Rechargeable Headlamp","USB","Hands-free light for dawn starts & caves."),
+    mk("hike-poles","trekking poles","~$36","🥾","Trekking Poles Pair","Aluminum","Save your knees on steep descents."),
   ],
   "Business": [
-    { id:"biz-garment", url:`https://www.amazon.com/dp/B07ZPML7NP?tag=${AMZN}`, price:"~$30", emoji:"👔", name:"Garment Folder", brand:"Eagle Creek Pack-It", why:"Suits & shirts arrive wrinkle-free." },
-    { id:"biz-steamer", url:`https://www.amazon.com/dp/B00EZUR2T0?tag=${AMZN}`, price:"~$50", emoji:"🧖", name:"Portable Steamer", brand:"Conair Travel", why:"Smooths shirts in minutes in any hotel." },
-    { id:"biz-sleeve", url:`https://www.amazon.com/dp/B07RTX5F8B?tag=${AMZN}`, price:"~$20", emoji:"💼", name:"Laptop Sleeve", brand:"tomtoc 360 Protective", why:"Drop-proof protection for your work laptop." },
-    { id:"biz-powerstrip", url:`https://www.amazon.com/dp/B083KBQML4?tag=${AMZN}`, price:"~$28", emoji:"🔌", name:"Travel Power Strip", brand:"NTONPOWER USB", why:"Charge laptop + 3 devices from one outlet." },
+    mk("biz-garment","garment folder packing","~$30","👔","Garment Folder","Wrinkle-free","Suits & shirts arrive wrinkle-free."),
+    mk("biz-steamer","portable travel steamer","~$50","🧖","Portable Steamer","Handheld","Smooths shirts in minutes in any hotel."),
+    mk("biz-sleeve","protective laptop sleeve","~$20","💼","Laptop Sleeve","Drop-proof","Drop-proof protection for your work laptop."),
+    mk("biz-powerstrip","travel power strip usb","~$28","🔌","Travel Power Strip","Multi-device","Charge laptop + 3 devices from one outlet."),
   ],
   "Cruise": [
-    { id:"cruise-hooks", url:`https://www.amazon.com/dp/B00B7FX7QX?tag=${AMZN}`, price:"~$10", emoji:"🧲", name:"Magnetic Cabin Hooks", brand:"6-Pack Heavy Duty", why:"Cabin walls are metal — instant storage." },
-    { id:"cruise-organizer", url:`https://www.amazon.com/dp/B07PHFFKKL?tag=${AMZN}`, price:"~$18", emoji:"🚪", name:"Over-Door Organizer", brand:"Simple Houseware", why:"Doubles your tiny cabin storage." },
-    { id:"cruise-wine", url:`https://www.amazon.com/dp/B003ZUXGEY?tag=${AMZN}`, price:"~$12", emoji:"🍷", name:"Wine Bottle Protector", brand:"WineSkin 4-Pack", why:"Bring bottles home without leaks." },
-    { id:"cruise-bands", url:`https://www.amazon.com/dp/B01N6S8YHV?tag=${AMZN}`, price:"~$15", emoji:"💊", name:"Motion Sickness Bands", brand:"Sea-Band Adult", why:"Drug-free relief for rough seas." },
-  ],
-};
-
+    mk("cruise-hooks","magnetic hooks heavy duty","~$10","🧲","Magnetic Cabin Hooks","6-pack","Cabin walls are metal — instant storage."),
+    mk("cruise-organizer","over door hanging organizer","~$18","🚪","Over-Door Organizer","Hanging","Doubles your tiny cabin storage."),
+    mk("cruise-wine","wine bottle protector travel","~$12","🍷","Wine Bottle Protector","Leak-proof","Bring bottles home without leaks."),
+];
+    
 const ALERT_TYPES = [
   { id:"weather", emoji:"🌦️", label:"Weather Updates",     desc:"Forecasts & packing tweaks" },
   { id:"safety",  emoji:"🚨", label:"Safety Alerts",        desc:"Travel advisories & entry changes" },
