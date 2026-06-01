@@ -89,7 +89,7 @@ const GEAR_BY_TRIP = {
     mk("cruise-hooks","magnetic hooks heavy duty","~$10","🧲","Magnetic Cabin Hooks","6-pack","Cabin walls are metal — instant storage."),
     mk("cruise-organizer","over door hanging organizer","~$18","🚪","Over-Door Organizer","Hanging","Doubles your tiny cabin storage."),
     mk("cruise-wine","wine bottle protector travel","~$12","🍷","Wine Bottle Protector","Leak-proof","Bring bottles home without leaks."),
-];
+};
     
 const ALERT_TYPES = [
   { id:"weather", emoji:"🌦️", label:"Weather Updates",     desc:"Forecasts & packing tweaks" },
