@@ -9,12 +9,6 @@ const AMZN = "worldprept-20";
 const VIATOR_SEARCH = "https://www.viator.com/searchResults/all?text=";
 const VIATOR_PARAMS = "&m=63915&pid=P00303056&mcid=42383&medium=link";
 const BOOKING = "?aid=304142"; // update when Booking.com approves
-// Travel-services affiliates — sign up free, then replace the ref/code in each URL below.
-// These are high-intent, high-conversion: every international traveler needs data + many want lounge/storage.
-const AIRALO_REF   = "?ref=worldprept";   // Airalo eSIM partner — apply at airalo.com/partners
-const HOLAFLY_REF  = "?ref=worldprept";   // Holafly eSIM affiliate (via Impact/Partnerize)
-const BOUNCE_REF   = "?ref=worldprept";   // Bounce luggage storage affiliate
-const LOUNGE_REF   = "?ref=worldprept";   // Airport lounge passes (e.g. via Priority Pass / DragonPass affiliate)
 
 const T = "#C4623A", TL = "#2C7873", INK = "#1A1410", INKL = "#4A3F35";
 const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,16,0.12)";
@@ -226,11 +220,11 @@ function exportPDF(form, result, checked) {
 function actLinks(dest) {
   const s = encodeURIComponent((dest||"").split(",")[0].trim());
   return [
-    { emoji:"⭐", name:"Top-Rated Tours",        desc:"Best-reviewed experiences",    url:`${VIATOR_SEARCH}${s}${VIATOR_PARAMS}` },
-    { emoji:"🚌", name:"Day Trips",              desc:"Excursions from the city",     url:`${VIATOR_SEARCH}${s}+day+trip${VIATOR_PARAMS}` },
-    { emoji:"🍜", name:"Food & Culture Tours",   desc:"Eat like a local",             url:`${VIATOR_SEARCH}${s}+food+tour${VIATOR_PARAMS}` },
-    { emoji:"🏄", name:"Outdoor Adventures",     desc:"Hiking, diving, water sports", url:`${VIATOR_SEARCH}${s}+outdoor${VIATOR_PARAMS}` },
-    { emoji:"🎟️", name:"Skip-the-Line Tickets", desc:"No queues at attractions",     url:`${VIATOR_SEARCH}${s}+tickets${VIATOR_PARAMS}` },
+    { emoji:"⭐", name:"Top-Rated Tours",        desc:"Best-reviewed experiences on Viator", url:`${VIATOR_SEARCH}${s}${VIATOR_PARAMS}` },
+    { emoji:"🍜", name:"Food & Culture Tours",   desc:"Eat like a local — via Viator",       url:`${VIATOR_SEARCH}${s}+food+tour${VIATOR_PARAMS}` },
+    { emoji:"🎫", name:"Klook Experiences",      desc:"Tours, transport & tickets (great in Asia)", url:"https://klook.tpk.lu/D4vCZ1uW" },
+    { emoji:"🎟️", name:"Skip-the-Line Tickets", desc:"Museums & attractions on Tiqets",      url:"https://tiqets.tpk.lu/m2oVMwbj" },
+    { emoji:"🏙️", name:"City Attraction Pass",   desc:"Multiple top sights, one pass — Go City", url:"https://gocity.tpk.lu/edahVlTx" },
   ];
 }
 function htlLinks(dest,ci,co) {
@@ -244,13 +238,11 @@ function htlLinks(dest,ci,co) {
   ];
 }
 function essLinks(dest) {
-  const c = encodeURIComponent((dest||"").split(",")[0].trim());
-  const country = encodeURIComponent((dest||"").split(",").slice(-1)[0].trim());
+  const city = (dest||"the city").split(",")[0];
   return [
-    { emoji:"📱", name:"eSIM Data Plan",       desc:"Get online the second you land — no roaming fees", url:`https://www.airalo.com/${AIRALO_REF}` },
-    { emoji:"🌐", name:"Unlimited Data eSIM",  desc:"Holafly unlimited plans for heavy users",          url:`https://esim.holafly.com/${HOLAFLY_REF}` },
-    { emoji:"🧳", name:"Luggage Storage",      desc:`Drop your bags in ${(dest||"the city").split(",")[0]} & explore hands-free`, url:`https://usebounce.com/${BOUNCE_REF}` },
-    { emoji:"🛋️", name:"Airport Lounge Pass",  desc:"Skip the crowds before your flight",               url:`https://www.loungebuddy.com/${LOUNGE_REF}` },
+    { emoji:"📱", name:"eSIM Data Plan",      desc:"Get online the second you land — no roaming fees", url:"https://airalo.tpk.lu/wwBoHwFj" },
+    { emoji:"🧳", name:"Luggage Storage",     desc:`Drop your bags in ${city} & explore hands-free`,   url:"https://radicalstorage.tpk.lu/1LHJ7wWv" },
+    { emoji:"✈️", name:"Flight Delay? Get Paid", desc:"Claim up to €600 for delayed or cancelled flights", url:"https://airhelp.tpk.lu/6jwSK54h" },
   ];
 }
 
@@ -1211,3 +1203,4 @@ export default function WorldPrept() {
     </div>
   );
 }
+
