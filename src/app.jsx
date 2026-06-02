@@ -21,6 +21,7 @@ const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,
 
 const INS = [
   { id:"sw", name:"SafetyWing",   logo:"🌍", color:T,         badge:"Most Popular", desc:"~$42–$84/mo. Cancel anytime. Global medical cover.", quote:()=>`https://safetywing.com/?referenceID=26534800&utm_source=26534800&utm_medium=Ambassador` },
+  { id:"wn", name:"World Nomads", logo:"🌏", color:"#2C7873", badge:"Adventure Ready", desc:"Covers 200+ activities. Trusted by adventurous travelers.", quote:()=>`https://www.anrdoezrs.net/click-101623228-15403748` },
   { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice", desc:"Strong family & cancellation plans. Major US insurer.", quote:(f)=>`https://www.allianztravelinsurance.com/buy/comboSearch.htm?travelersCount=${f.people}&depDate=${f.depDate}&retDate=${f.retDate}&destination=${encodeURIComponent(f.destination||"")}&src=worldprept` },
   { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
 ];
@@ -89,9 +90,10 @@ const GEAR_BY_TRIP = {
     mk("cruise-hooks","magnetic hooks heavy duty","~$10","🧲","Magnetic Cabin Hooks","6-pack","Cabin walls are metal — instant storage."),
     mk("cruise-organizer","over door hanging organizer","~$18","🚪","Over-Door Organizer","Hanging","Doubles your tiny cabin storage."),
     mk("cruise-wine","wine bottle protector travel","~$12","🍷","Wine Bottle Protector","Leak-proof","Bring bottles home without leaks."),
+    mk("cruise-bands","sea band motion sickness","~$15","💊","Motion Sickness Bands","Drug-free","Drug-free relief for rough seas."),
   ],
 };
-    
+
 const ALERT_TYPES = [
   { id:"weather", emoji:"🌦️", label:"Weather Updates",     desc:"Forecasts & packing tweaks" },
   { id:"safety",  emoji:"🚨", label:"Safety Alerts",        desc:"Travel advisories & entry changes" },
@@ -1126,6 +1128,13 @@ export default function WorldPrept() {
               ))}
             </div>
             <p style={{fontSize:"0.62rem",color:INKL,opacity:0.5,marginTop:8,paddingLeft:2}}>Free packing guides for the world's most-visited cities.</p>
+          </div>
+          <div style={{width:"100%",maxWidth:540,marginTop:24,paddingTop:16,borderTop:`1px solid ${BDR}`,textAlign:"center"}}>
+            <p style={{fontSize:"0.62rem",color:INKL,opacity:0.55,lineHeight:1.6}}>
+              <a href="/privacy" style={{color:INKL,textDecoration:"underline"}}>Privacy Policy</a>
+              {" · "}WorldPrept is free. We may earn a commission from affiliate links at no extra cost to you.
+            </p>
+            <p style={{fontSize:"0.6rem",color:INKL,opacity:0.4,marginTop:6}}>© {new Date().getFullYear()} WorldWideWach LLC</p>
           </div>
         </>
       )}
