@@ -5,17 +5,44 @@ import DestinationSelector from "./DestinationSelector.jsx";
 // Always use the server proxy — API key lives in Vercel env vars, never in browser
 const USE_PROXY = true;
 const API_PROXY = "/api/generate";
+
+// --- GA4 event tracking (gtag script already loads in index.html, G-ZPYNQT2PXQ) ---
+const track = (name, params) => {
+  try {
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", name, params || {});
+    }
+  } catch (e) { console.error("track:", e); }
+};
+const affPartner = (url) => {
+  try {
+    const h = new URL(url).hostname;
+    if (h.includes("amazon")) return "amazon";
+    if (h.includes("viator")) return "viator";
+    if (h.includes("safetywing")) return "safetywing";
+    if (h.includes("booking")) return "booking";
+    if (h.includes("tpk.lu") || h.includes("travelpayouts")) return "travelpayouts";
+    if (h.includes("worldnomads")) return "worldnomads";
+    return h;
+  } catch (e) { console.error("affPartner:", e); return "unknown"; }
+};
+const trackAff = (label, url) => track("affiliate_click", { partner: affPartner(url), label: label || "" });
 const AMZN = "worldprept-20";
 const VIATOR_SEARCH = "https://www.viator.com/searchResults/all?text=";
 const VIATOR_PARAMS = "&m=63915&pid=P00303056&mcid=42383&medium=link";
 const BOOKING = "?aid=304142"; // update when Booking.com approves
+// Travel-services affiliates — sign up free, then replace the ref/code in each URL below.
+// These are high-intent, high-conversion: every international traveler needs data + many want lounge/storage.
+const AIRALO_REF   = "?ref=worldprept";   // Airalo eSIM partner — apply at airalo.com/partners
+const HOLAFLY_REF  = "?ref=worldprept";   // Holafly eSIM affiliate (via Impact/Partnerize)
+const BOUNCE_REF   = "?ref=worldprept";   // Bounce luggage storage affiliate
+const LOUNGE_REF   = "?ref=worldprept";   // Airport lounge passes (e.g. via Priority Pass / DragonPass affiliate)
 
 const T = "#C4623A", TL = "#2C7873", INK = "#1A1410", INKL = "#4A3F35";
 const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,16,0.12)";
 
 const INS = [
   { id:"sw", name:"SafetyWing",   logo:"🌍", color:T,         badge:"Most Popular", desc:"~$42–$84/mo. Cancel anytime. Global medical cover.", quote:()=>`https://safetywing.com/?referenceID=26534800&utm_source=26534800&utm_medium=Ambassador` },
-  { id:"wn", name:"World Nomads", logo:"🌏", color:"#2C7873", badge:"Adventure Ready", desc:"Covers 200+ activities. Trusted by adventurous travelers.", quote:()=>`https://www.anrdoezrs.net/click-101623228-15403748` },
   { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice", desc:"Strong family & cancellation plans. Major US insurer.", quote:(f)=>`https://www.allianztravelinsurance.com/buy/comboSearch.htm?travelersCount=${f.people}&depDate=${f.depDate}&retDate=${f.retDate}&destination=${encodeURIComponent(f.destination||"")}&src=worldprept` },
   { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
 ];
@@ -220,11 +247,11 @@ function exportPDF(form, result, checked) {
 function actLinks(dest) {
   const s = encodeURIComponent((dest||"").split(",")[0].trim());
   return [
-    { emoji:"⭐", name:"Top-Rated Tours",        desc:"Best-reviewed experiences on Viator", url:`${VIATOR_SEARCH}${s}${VIATOR_PARAMS}` },
-    { emoji:"🍜", name:"Food & Culture Tours",   desc:"Eat like a local — via Viator",       url:`${VIATOR_SEARCH}${s}+food+tour${VIATOR_PARAMS}` },
-    { emoji:"🎫", name:"Klook Experiences",      desc:"Tours, transport & tickets (great in Asia)", url:"https://klook.tpk.lu/D4vCZ1uW" },
-    { emoji:"🎟️", name:"Skip-the-Line Tickets", desc:"Museums & attractions on Tiqets",      url:"https://tiqets.tpk.lu/m2oVMwbj" },
-    { emoji:"🏙️", name:"City Attraction Pass",   desc:"Multiple top sights, one pass — Go City", url:"https://gocity.tpk.lu/edahVlTx" },
+    { emoji:"⭐", name:"Top-Rated Tours",        desc:"Best-reviewed experiences",    url:`${VIATOR_SEARCH}${s}${VIATOR_PARAMS}` },
+    { emoji:"🚌", name:"Day Trips",              desc:"Excursions from the city",     url:`${VIATOR_SEARCH}${s}+day+trip${VIATOR_PARAMS}` },
+    { emoji:"🍜", name:"Food & Culture Tours",   desc:"Eat like a local",             url:`${VIATOR_SEARCH}${s}+food+tour${VIATOR_PARAMS}` },
+    { emoji:"🏄", name:"Outdoor Adventures",     desc:"Hiking, diving, water sports", url:`${VIATOR_SEARCH}${s}+outdoor${VIATOR_PARAMS}` },
+    { emoji:"🎟️", name:"Skip-the-Line Tickets", desc:"No queues at attractions",     url:`${VIATOR_SEARCH}${s}+tickets${VIATOR_PARAMS}` },
   ];
 }
 function htlLinks(dest,ci,co) {
@@ -238,11 +265,13 @@ function htlLinks(dest,ci,co) {
   ];
 }
 function essLinks(dest) {
-  const city = (dest||"the city").split(",")[0];
+  const c = encodeURIComponent((dest||"").split(",")[0].trim());
+  const country = encodeURIComponent((dest||"").split(",").slice(-1)[0].trim());
   return [
-    { emoji:"📱", name:"eSIM Data Plan",      desc:"Get online the second you land — no roaming fees", url:"https://airalo.tpk.lu/wwBoHwFj" },
-    { emoji:"🧳", name:"Luggage Storage",     desc:`Drop your bags in ${city} & explore hands-free`,   url:"https://radicalstorage.tpk.lu/1LHJ7wWv" },
-    { emoji:"✈️", name:"Flight Delay? Get Paid", desc:"Claim up to €600 for delayed or cancelled flights", url:"https://airhelp.tpk.lu/6jwSK54h" },
+    { emoji:"📱", name:"eSIM Data Plan",       desc:"Get online the second you land — no roaming fees", url:`https://www.airalo.com/${AIRALO_REF}` },
+    { emoji:"🌐", name:"Unlimited Data eSIM",  desc:"Holafly unlimited plans for heavy users",          url:`https://esim.holafly.com/${HOLAFLY_REF}` },
+    { emoji:"🧳", name:"Luggage Storage",      desc:`Drop your bags in ${(dest||"the city").split(",")[0]} & explore hands-free`, url:`https://usebounce.com/${BOUNCE_REF}` },
+    { emoji:"🛋️", name:"Airport Lounge Pass",  desc:"Skip the crowds before your flight",               url:`https://www.loungebuddy.com/${LOUNGE_REF}` },
   ];
 }
 
@@ -514,6 +543,7 @@ function GearCard({ item, owned, onToggle }) {
         <span style={{color:owned?"white":"#4A3F35"}}>{owned?"✓":"·"}</span>
       </button>
       <a href={item.url} target="_blank" rel="noopener noreferrer" className="gear-card"
+        onClick={()=>trackAff(item.name,item.url)}
         onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
         style={{background:owned?"rgba(44,120,115,0.05)":SAND,borderColor:owned?"#2C7873":hov?T:BDR,opacity:owned?0.7:1}}>
         <span style={{fontSize:"1.15rem"}}>{item.emoji}</span>
@@ -597,6 +627,7 @@ function InsuranceView({ text, recIds, form }) {
           <div style={{display:"flex",flexDirection:"column",gap:9}}>
             {picked.map(p=>(
               <a key={p.id} href={p.quote(form)} target="_blank" rel="noopener noreferrer" className="affcard"
+                onClick={()=>trackAff(p.name,p.quote(form))}
                 onMouseEnter={e=>{e.currentTarget.style.borderColor=p.color;e.currentTarget.style.transform="translateY(-1px)";}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor=BDR;e.currentTarget.style.transform="none";}}>
                 <div style={{width:40,height:40,borderRadius:9,background:p.color+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.1rem",flexShrink:0}}>{p.logo}</div>
@@ -624,6 +655,7 @@ function InsuranceView({ text, recIds, form }) {
 function AffCard({ emoji, name, desc, url, color }) {
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="affcard"
+      onClick={()=>trackAff(name,url)}
       onMouseEnter={e=>{e.currentTarget.style.borderColor=color;e.currentTarget.style.transform="translateY(-1px)";}}
       onMouseLeave={e=>{e.currentTarget.style.borderColor=BDR;e.currentTarget.style.transform="none";}}>
       <div style={{width:36,height:36,borderRadius:8,background:color+"15",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1rem",flexShrink:0}}>{emoji}</div>
@@ -823,6 +855,7 @@ function EmailModal({ form:tf, onClose }) {
     try {
       const res=await fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,name,alerts,trip:tf})});
       await res.json();
+      track("email_signup",{destination:(tf&&tf.destination)||""});
     } catch(e){ console.error("Subscribe:",e); }
     setLoading(false); setDone(true);
   };
@@ -955,6 +988,7 @@ export default function WorldPrept() {
       if(!raw) throw new Error("Empty response — please try again.");
       const parsed=parseAll(raw);
       if(!parsed.packing) throw new Error("Incomplete response — please try again.");
+      track("list_built",{destination:form.destination||"",trip_type:form.tripType||""});
       if(mountedRef.current){setResult(parsed);setScreen("results");setTab("packing");}
     } catch(err){
       console.error("WorldPrept error:",err);
