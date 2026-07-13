@@ -23,25 +23,48 @@ const PAGES = {
   tokyo: {
     city: "Tokyo",
     country: "Japan",
-    flag: "🇯🇵",
+    flag: "\ud83c\uddef\ud83c\uddf5",
     slug: "tokyo",
-    title: "What to Pack for Tokyo: Complete 2025 Packing List",
-    metaDesc: "The complete packing list for Tokyo, Japan. Weather-matched clothing, essentials, and seasonal tips for your trip. Free AI-generated list in 30 seconds.",
-    intro: "Tokyo blends ultramodern and traditional, and packing right means preparing for everything from humid summers to crisp winters and a whole lot of walking. This guide covers exactly what to bring, when to go, and the essentials most travelers forget.",
-    bestTime: "Spring (March–May) for cherry blossoms and autumn (September–November) for mild weather and fall colors. Summer is hot and humid; winter is cold but dry.",
-    weather: "Summers reach 30–35°C (86–95°F) with high humidity. Winters drop to 2–10°C (36–50°F). Spring and autumn sit comfortably around 15–22°C (59–72°F).",
+    title: "What to Pack for Tokyo (2026): Banned Medications, Weather & Full List",
+    metaDesc: "Complete Tokyo packing list for 2026 \u2014 including the common medications that are illegal in Japan (Adderall, Sudafed), what customs confiscates, seasonal weather, and the essentials first-timers forget.",
+    intro: "Most Tokyo packing guides tell you to bring comfortable shoes. Almost none warn you that the cold medicine in your bag may be illegal in Japan \u2014 and that travelers have been detained at customs for it. This guide covers the rules that actually catch people out, plus exactly what to pack by season.",
+    bestTime: "Spring (late March\u2013May) for cherry blossoms and autumn (late September\u2013November) for mild weather and fall colour. June is rainy season (tsuyu). July\u2013August is genuinely punishing \u2014 30\u201335\u00b0C with humidity that makes it feel far hotter. Winter is cold but dry and clear, and it is the cheapest, least crowded time to go.",
+    weather: "Summer (Jun\u2013Aug): 30\u201335\u00b0C (86\u201395\u00b0F) with very high humidity \u2014 you will sweat through cotton, so pack quick-dry fabrics. Winter (Dec\u2013Feb): 2\u201310\u00b0C (36\u201350\u00b0F), dry and sunny, rarely snowy in the city. Spring and autumn: a comfortable 15\u201322\u00b0C (59\u201372\u00b0F). Indoor heating and air-conditioning are aggressive year-round, so layers matter more than a single heavy piece.",
+    warning: {
+      title: "Before you pack: some common medications are banned in Japan",
+      body: "Japan enforces its drug-import rules strictly, and they catch out ordinary travelers carrying ordinary medicine. Japanese customs does not recognise foreign prescriptions, and there is no tourist exemption.",
+      items: [
+        "Adderall and Vyvanse (amphetamine-based ADHD medication) are completely prohibited \u2014 there is no permit that makes them legal, even with a valid prescription from your doctor.",
+        "Pseudoephedrine \u2014 the active ingredient in Sudafed and many combination cold and flu tablets \u2014 is classified as a stimulant raw material and cannot be brought in for personal use.",
+        "Codeine (found in some cough syrups and painkillers) and diphenhydramine (Benadryl) are restricted and can be confiscated at the border.",
+        "Ritalin and Concerta (methylphenidate) are allowed only with a Yunyu Kakunin-sho import certificate, which must be applied for well before departure \u2014 typically at least two weeks.",
+        "Check the active ingredient, not the brand name. Brands differ by country; the ingredient is what customs screens for.",
+      ],
+      footer: "Practical advice: check every medication you plan to bring against Japan's current import rules before you fly, carry medicines in original labelled packaging with a copy of your prescription, and if in doubt, contact the Japanese embassy or apply for the import certificate in advance.",
+    },
     essentials: [
-      "Comfortable walking shoes — you'll average 15,000+ steps a day",
-      "Portable Wi-Fi or eSIM — essential for navigating the metro",
-      "Coins purse — Japan is still a cash-friendly society",
-      "Layers — trains and shops are heavily air-conditioned or heated",
-      "A small towel — many public restrooms don't provide them",
+      "Comfortable, broken-in walking shoes \u2014 Tokyo days routinely hit 15,000\u201325,000 steps and the city is far more walking-heavy than most visitors expect",
+      "Slip-on shoes \u2014 you will remove them at temples, some restaurants, ryokan and even certain museums, and laces get tedious fast",
+      "A portable eSIM or pocket Wi-Fi \u2014 the metro system is navigable but unforgiving without live data and maps",
+      "Cash and a coin purse \u2014 Japan is far more cash-based than visitors assume; many small restaurants, shrines and older shops still refuse cards",
+      "An IC card (Suica or Pasmo) \u2014 tap through the metro instead of buying tickets each trip; you can add it to your phone before you arrive",
+      "A small hand towel \u2014 many public restrooms have no paper towels or dryers, and locals carry one for exactly this reason",
+      "A packable layer \u2014 trains, malls and restaurants are heavily air-conditioned in summer and heated in winter",
+      "A foldable tote \u2014 shops charge for bags, and you will accumulate more than you plan to",
     ],
     seasonal: [
-      { season: "Spring (Mar–May)", tip: "Light layers, a packable rain jacket, and a cardigan for cool evenings." },
-      { season: "Summer (Jun–Aug)", tip: "Breathable cotton/linen, a hand fan, sunscreen, and a water bottle." },
-      { season: "Autumn (Sep–Nov)", tip: "A mix of long sleeves and a light jacket; perfect walking weather." },
-      { season: "Winter (Dec–Feb)", tip: "A warm coat, scarf, and thermal layers; it's cold but rarely snowy in the city." },
+      { season: "Spring (Mar\u2013May)", tip: "Light layers, a packable rain jacket and a cardigan for cool evenings. Cherry blossom season draws crowds \u2014 book accommodation months ahead. Mornings and nights are noticeably cooler than afternoons." },
+      { season: "Summer (Jun\u2013Aug)", tip: "Rainy season runs through June; July and August are hot and extremely humid. Pack quick-dry, breathable fabrics rather than cotton, a compact umbrella, a hand fan, sunscreen and a refillable water bottle. Heat exhaustion is a genuine risk." },
+      { season: "Autumn (Sep\u2013Nov)", tip: "Arguably the best walking weather of the year. A mix of long sleeves and a light jacket covers most days. Typhoon season can linger into September, so a rain layer is still wise." },
+      { season: "Winter (Dec\u2013Feb)", tip: "Cold, dry and clear. A warm coat, scarf and thermal base layers are enough \u2014 it rarely snows in central Tokyo. Heated indoor spaces mean you will be removing that coat constantly, so layers beat bulk." },
+    ],
+    faqs: [
+      { q: "Can I bring my prescription medication to Japan?", a: "It depends entirely on the active ingredient. Adderall and Vyvanse are banned outright with no exemption, even with a prescription. Ritalin and Concerta require a Yunyu Kakunin-sho import certificate obtained before you travel. Many other prescriptions are fine in personal quantities. Always check the ingredient against Japan's import rules before flying, and carry medication in its original labelled packaging with a copy of your prescription." },
+      { q: "Is Sudafed illegal in Japan?", a: "Products containing pseudoephedrine \u2014 the active ingredient in Sudafed and many cold and flu tablets \u2014 are prohibited from being brought into Japan and can be seized at customs. Check the ingredient list on any cold medicine before you pack it, and buy equivalent remedies at a Japanese pharmacy after you arrive instead." },
+      { q: "Do I need cash in Tokyo, or are cards accepted?", a: "Bring cash. Japan is far more cash-based than most visitors expect. Convenience stores, chains and major restaurants take cards, but smaller restaurants, shrines, markets and older shops are frequently cash-only. Withdraw yen from a 7-Eleven or Japan Post ATM, which reliably accept foreign cards." },
+      { q: "What shoes should I pack for Tokyo?", a: "Comfortable, broken-in walking shoes are the single most important item \u2014 you will walk far more than you expect. Bring slip-ons or shoes that are easy to remove, because you will take them off at temples, ryokan, some restaurants and certain museums. Avoid brand-new shoes you have not walked in." },
+      { q: "How much should I pack for a Tokyo trip?", a: "Pack lighter than you think. Laundry is widely available, luggage storage and coin lockers are everywhere, and you will almost certainly buy things. Tokyo's stations involve a lot of stairs and long transfers, so a bag you can carry comfortably matters more than one that holds everything." },
+      { q: "Do I need travel insurance for Japan?", a: "It is strongly recommended. Japan has excellent healthcare, but it is not free for visitors and medical costs for tourists can be significant. Travel insurance also covers trip cancellation, delays and lost luggage, which matter more during typhoon season." },
     ],
   },
   paris: {
@@ -371,13 +394,30 @@ export default function DestinationPage({ slug = "tokyo" }) {
     // JSON-LD structured data — helps Google show rich results
     let ld = document.getElementById("ld-json");
     if (!ld) { ld = document.createElement("script"); ld.id = "ld-json"; ld.type = "application/ld+json"; document.head.appendChild(ld); }
-    ld.textContent = JSON.stringify({
+    const graph = [{
       "@context": "https://schema.org",
       "@type": "Article",
       "headline": page.title,
       "description": page.metaDesc,
       "about": { "@type": "Place", "name": `${page.city}, ${page.country}` },
-    });
+    }];
+    if (page.faqs && page.faqs.length) {
+      graph.push({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": page.faqs.map(f => ({
+          "@type": "Question",
+          "name": f.q,
+          "acceptedAnswer": { "@type": "Answer", "text": f.a },
+        })),
+      });
+    }
+    ld.textContent = JSON.stringify(graph);
+
+    // Canonical URL — prevents duplicate-content dilution
+    let canon = document.querySelector('link[rel="canonical"]');
+    if (!canon) { canon = document.createElement("link"); canon.setAttribute("rel","canonical"); document.head.appendChild(canon); }
+    canon.setAttribute("href", `https://worldprept.com/pack/${page.slug}`);
   }, [page]);
 
   return (
@@ -403,6 +443,23 @@ export default function DestinationPage({ slug = "tokyo" }) {
       </div>
 
       <div style={wrap}>
+        {/* Critical warning — the differentiated content */}
+        {page.warning && (
+          <section style={{ marginTop:28, marginBottom:24, background:"rgba(196,98,58,0.07)", border:"1.5px solid rgba(196,98,58,0.35)", borderRadius:14, padding:"20px 22px" }}>
+            <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.3rem", color:INK, marginBottom:10 }}>⚠️ {page.warning.title}</h2>
+            <p style={{ fontSize:"0.9rem", color:INKL, lineHeight:1.7, marginBottom:14 }}>{page.warning.body}</p>
+            <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:14 }}>
+              {page.warning.items.map((it, i) => (
+                <div key={`w${i}`} style={{ display:"flex", gap:10, alignItems:"flex-start" }}>
+                  <span style={{ color:T, fontWeight:800, flexShrink:0 }}>•</span>
+                  <span style={{ fontSize:"0.88rem", color:INKL, lineHeight:1.6 }}>{it}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize:"0.85rem", color:INKL, lineHeight:1.7, fontStyle:"italic", paddingTop:12, borderTop:`1px solid ${BDR}` }}>{page.warning.footer}</p>
+          </section>
+        )}
+
         {/* Top CTA */}
         <CTA slug={page.slug} />
 
@@ -450,15 +507,16 @@ export default function DestinationPage({ slug = "tokyo" }) {
         {/* FAQ for SEO */}
         <section style={{ marginBottom:24 }}>
           <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.35rem", color:INK, marginBottom:14 }}>Frequently Asked Questions</h2>
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <div>
-              <p style={{ fontSize:"0.9rem", fontWeight:700, color:INK, marginBottom:4 }}>How much should I pack for {page.city}?</p>
-              <p style={{ fontSize:"0.85rem", color:INKL, lineHeight:1.6 }}>It depends on your trip length and luggage. WorldPrept generates a list matched to your exact dates and bag size in 30 seconds — free.</p>
-            </div>
-            <div>
-              <p style={{ fontSize:"0.9rem", fontWeight:700, color:INK, marginBottom:4 }}>Do I need travel insurance for {page.country}?</p>
-              <p style={{ fontSize:"0.85rem", color:INKL, lineHeight:1.6 }}>Travel insurance is strongly recommended for international trips. WorldPrept compares options with quotes pre-filled for your dates.</p>
-            </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+            {(page.faqs && page.faqs.length ? page.faqs : [
+              { q:`How much should I pack for ${page.city}?`, a:"It depends on your trip length and luggage. WorldPrept generates a list matched to your exact dates and bag size in 30 seconds — free." },
+              { q:`Do I need travel insurance for ${page.country}?`, a:"Travel insurance is strongly recommended for international trips. WorldPrept lets you compare options side by side for your dates." },
+            ]).map((f, i) => (
+              <div key={`faq${i}`}>
+                <p style={{ fontSize:"0.92rem", fontWeight:700, color:INK, marginBottom:5 }}>{f.q}</p>
+                <p style={{ fontSize:"0.86rem", color:INKL, lineHeight:1.7 }}>{f.a}</p>
+              </div>
+            ))}
           </div>
         </section>
 
