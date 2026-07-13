@@ -23,6 +23,8 @@ const affPartner = (url) => {
     if (h.includes("booking")) return "booking";
     if (h.includes("tpk.lu") || h.includes("travelpayouts")) return "travelpayouts";
     if (h.includes("worldnomads")) return "worldnomads";
+    if (h.includes("allianz")) return "allianz";
+    if (h.includes("travelguard")) return "travelguard";
     return h;
   } catch (e) { console.error("affPartner:", e); return "unknown"; }
 };
@@ -43,8 +45,8 @@ const SAND = "#F5EFE0", SANDD = "#EDE4CC", CREAM = "#FDFAF4", BDR = "rgba(26,20,
 
 const INS = [
   { id:"sw", name:"SafetyWing",   logo:"🌍", color:T,         badge:"Most Popular", desc:"~$42–$84/mo. Cancel anytime. Global medical cover.", quote:()=>`https://safetywing.com/?referenceID=26534800&utm_source=26534800&utm_medium=Ambassador` },
-  { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice", desc:"Strong family & cancellation plans. Major US insurer.", quote:(f)=>`https://www.allianztravelinsurance.com/buy/comboSearch.htm?travelersCount=${f.people}&depDate=${f.depDate}&retDate=${f.retDate}&destination=${encodeURIComponent(f.destination||"")}&src=worldprept` },
-  { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:(f)=>`https://www.travelguard.com/travel-insurance/plans/?ref=worldprept&dep=${f.depDate}&ret=${f.retDate}&dest=${encodeURIComponent(f.destination||"")}` },
+  { id:"al", name:"Allianz",      logo:"🛡️", color:"#4A6FA5", badge:"Family Choice", desc:"Strong family & cancellation plans. Major US insurer.", quote:()=>`https://www.allianztravelinsurance.com/` },
+  { id:"tg", name:"Travel Guard", logo:"💼", color:"#6B4C8A", badge:"Business Pick",  desc:"AIG-backed 24/7 assistance. Cancel-for-any-reason.", quote:()=>`https://www.travelguard.com/` },
 ];
 
 // Search-based Amazon links — never break, and your affiliate tag still tracks every sale.
@@ -558,8 +560,19 @@ function GearCard({ item, owned, onToggle }) {
   );
 }
 
+function InsurancePrompt({ form, onGo }) {
+  const dest = form.destination ? form.destination.split(",")[0].trim() : "your trip";
+  return (
+    <div style={{marginTop:24,padding:16,borderRadius:14,background:"rgba(44,120,115,0.06)",border:"1.5px solid rgba(44,120,115,0.25)"}}>
+      <p style={{fontSize:"0.95rem",fontWeight:800,color:INK,marginBottom:4}}>🛡️ One more thing before {dest}</p>
+      <p style={{fontSize:"0.78rem",color:INKL,lineHeight:1.5,marginBottom:12}}>Lost bags, delays and medical bills abroad aren't covered by most home policies. Compare 4 travel insurers side by side — takes about a minute.</p>
+      <button onClick={onGo} style={{width:"100%",padding:"12px 16px",borderRadius:10,border:"none",background:"#2C7873",color:"white",fontSize:"0.85rem",fontWeight:700,cursor:"pointer"}}>Compare travel insurance →</button>
+    </div>
+  );
+}
+
 function GearSection({ form, owned, setOwned }) {
-  const [expanded,setExpanded]=useState(false);
+  const [expanded,setExpanded]=useState(true);
   const adults=parseInt(form.people)||1;
   const hasKids=form.kids!=="No kids";
   const isGroup=adults>=4;
@@ -577,7 +590,7 @@ function GearSection({ form, owned, setOwned }) {
     <div style={{marginTop:28,paddingTop:20,borderTop:`1px solid ${BDR}`}}>
       <button onClick={()=>setExpanded(e=>!e)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",background:"none",border:"none",cursor:"pointer",padding:0,marginBottom:expanded?14:0}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <p style={{fontSize:"0.63rem",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:INKL}}>⭐ Upgrade Your Trip</p>
+          <p style={{fontSize:"0.95rem",fontWeight:800,color:INK}}>🛒 Get the gear on your list</p>
           {ownedCount>0&&<span style={{fontSize:"0.6rem",color:"#2C7873",fontWeight:700}}>✓ {ownedCount} owned</span>}
         </div>
         <span style={{fontSize:"0.65rem",color:INKL}}>{expanded?"Hide ▲":"Show gear ▼"}</span>
@@ -623,7 +636,7 @@ function InsuranceView({ text, recIds, form }) {
       {picked.length>0&&(
         <div style={{marginTop:20}}>
           <p className="sec-hdr">🏢 Recommended for This Trip</p>
-          <p style={{fontSize:"0.72rem",color:INKL,marginBottom:12,lineHeight:1.5}}>Each button goes to a quote form pre-filled with your dates & destination.</p>
+          <p style={{fontSize:"0.72rem",color:INKL,marginBottom:12,lineHeight:1.5}}>Each button opens the insurer's quote page in a new tab.</p>
           <div style={{display:"flex",flexDirection:"column",gap:9}}>
             {picked.map(p=>(
               <a key={p.id} href={p.quote(form)} target="_blank" rel="noopener noreferrer" className="affcard"
@@ -640,7 +653,7 @@ function InsuranceView({ text, recIds, form }) {
                 </div>
                 <div style={{textAlign:"right",flexShrink:0}}>
                   <p style={{fontSize:"0.65rem",fontWeight:700,color:p.color}}>Get Quote ↗</p>
-                  <p style={{fontSize:"0.55rem",color:INKL,opacity:0.6}}>Pre-filled</p>
+                  <p style={{fontSize:"0.55rem",color:INKL,opacity:0.6}}>New tab</p>
                 </div>
               </a>
             ))}
@@ -949,7 +962,7 @@ export default function WorldPrept() {
     return()=>clearInterval(progRef.current);
   },[screen]);
   useEffect(()=>{
-    if(screen==="results"){ const t=setTimeout(()=>{ if(mountedRef.current&&!showEmail) setShowEmail(true); },7000); return()=>clearTimeout(t); }
+    if(screen==="results"){ const t=setTimeout(()=>{ if(mountedRef.current&&!showEmail) setShowEmail(true); },22000); return()=>clearTimeout(t); }
   },[screen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
@@ -1032,7 +1045,7 @@ export default function WorldPrept() {
           <div className="sp-row">
             <span className="sp-pill">🚀 <strong>Early access</strong> — be among the first</span>
             <span className="sp-pill">🌍 <strong>90+</strong> destinations</span>
-            <span className="sp-pill">🛡️ Insurance <strong>pre-filled quotes</strong></span>
+            <span className="sp-pill">🛡️ Insurance <strong>compare & quote</strong></span>
           </div>
           <div className="card">
             <Steps cur={step} total={3}/>
@@ -1225,7 +1238,7 @@ export default function WorldPrept() {
             <button className={`tab${tab==="insurance"?" on":""}`} onClick={()=>setTab("insurance")}>🛡️ Insurance</button>
           </div>
           <div className="panel">
-            {tab==="packing"&&<><PackingList text={result.packing} checked={checked} setChecked={setChecked} onShare={openShare}/><GearSection form={form} owned={owned} setOwned={setOwned}/></>}
+            {tab==="packing"&&<><PackingList text={result.packing} checked={checked} setChecked={setChecked} onShare={openShare}/><GearSection form={form} owned={owned} setOwned={setOwned}/><InsurancePrompt form={form} onGo={()=>{setTab("insurance");window.scrollTo(0,0);}}/></>}
             {tab==="events"&&<EventsView text={result.events} form={form}/>}
             {tab==="insurance"&&<InsuranceView text={result.insurance} recIds={insRec} form={form}/>}
           </div>
