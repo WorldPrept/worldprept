@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
-import WorldPrept from './App.jsx'
+import WorldPrept from './app.jsx'
 import DestinationPage from './DestinationPage.jsx'
 import PrivacyPolicy from './PrivacyPolicy.jsx'
 import TSARules from './TSARules.jsx'
