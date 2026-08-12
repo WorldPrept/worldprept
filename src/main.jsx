@@ -1,9 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
-import WorldPrept from './app.jsx'
+import WorldPrept from './App.jsx'
 import DestinationPage from './DestinationPage.jsx'
 import PrivacyPolicy from './PrivacyPolicy.jsx'
+import TSARules from './TSARules.jsx'
 
 // Renders the right destination page based on the URL, e.g. /pack/tokyo
 function PackPage() {
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<WorldPrept />} />
         <Route path="/pack/:slug" element={<PackPage />} />
+        <Route path="/tsa-rules" element={<TSARules />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
