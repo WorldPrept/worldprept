@@ -159,6 +159,54 @@ const PAGES = {
       { q: "Do I need travel insurance for Bali?", a: "Strongly recommended. Scooter accidents are the most common serious incident for visitors, and good hospitals in Denpasar are private and expensive. Check that your policy covers riding a scooter — many only do if you hold the proper license, which is another reason to sort the permit before you go." },
     ],
   },
+  "new-york": {
+    city: "New York",
+    country: "USA",
+    flag: "\ud83c\uddfa\ud83c\uddf8",
+    slug: "new-york",
+    title: "What to Pack for New York (2026): OMNY, Tipping & Full List",
+    metaDesc: "Complete New York City packing list for 2026 — the MetroCard is gone and OMNY replaced it, the 18-minute tap rule that double-charges you, tipping norms visitors get wrong, Times Square scams, and what to bring.",
+    intro: "New York punishes two things: bad shoes and not knowing how the subway charges you. The MetroCard was retired at the start of 2026, tapping the same card twice too quickly costs you a second fare, and tipping here is not optional the way it is elsewhere. Here is what to pack and what to know first.",
+    bestTime: "April to June and September to early November: mild, walkable and the parks look their best. Summer is hot, humid and crowded. Winter is cold and grey but the city is at its most cinematic between Thanksgiving and New Year, with hotel prices spiking to match.",
+    weather: "Real four-season extremes. Summer runs 25 to 33 C (77 to 91 F) with heavy humidity and brutally hot subway platforms. Winter sits around minus 3 to 5 C (27 to 41 F) with wind funnelling between buildings that makes it feel far colder. Spring and autumn are 12 to 22 C (54 to 72 F) and close to perfect. Indoor heating and air conditioning are both aggressive, so layers matter more than any single heavy item.",
+    warning: {
+      title: "What first-time visitors get wrong in New York",
+      body: "None of these will get you fined, but they will cost you money, time, or the goodwill of eight million people moving fast around you.",
+      items: [
+        "The yellow MetroCard is finished. New sales ended at the close of 2025 and the system now runs on OMNY, so just tap any contactless card or phone wallet at the turnstile. There is nothing to buy in advance.",
+        "The 18-minute rule: if you tap the same card or device at the same station again within about 18 minutes, you are charged a second fare. Each traveller in your group needs their own card or device.",
+        "Check the uptown or downtown signage before you go down the stairs. Many stations have separate entrances per direction and there is no way to cross over once you are through the turnstile.",
+        "Tipping is part of the price here, not a bonus: roughly 18 to 20 percent at restaurants, a dollar or two per drink at bars, and something for hotel housekeeping. Under-tipping reads as rude rather than thrifty.",
+        "Times Square runs a set of soft scams: costumed characters who demand payment after a photo, free CDs pressed into your hands, and three-card-monte tables. Decline and keep walking.",
+        "Jaywalking was decriminalised in late 2024, so crossing mid-block is legal now. Cars, cyclists and delivery e-bikes still do not stop, and bikes routinely travel against traffic on one-way streets.",
+      ],
+      footer: "Practical version: one contactless card per person for OMNY, check uptown or downtown before descending, budget 18 to 20 percent for tips, ignore anyone offering you something in Times Square, and look both ways twice.",
+    },
+    essentials: [
+      "Genuinely broken-in walking shoes. Twenty to twenty-five thousand steps a day is normal here and the pavement is unforgiving concrete",
+      "A contactless card or phone wallet per traveller for OMNY subway and bus taps",
+      "Layers built around a mid-layer you can carry, since interiors are heated or air conditioned to extremes year-round",
+      "A slim crossbody bag worn in front for the subway, Times Square and Union Square, where pickpockets work crowds",
+      "A compact umbrella. Rain arrives fast and the wind between buildings kills cheap ones",
+      "A refillable water bottle. Tap water is famously good and free refills are easy",
+      "Some cash in small bills for tips, cash-only slice shops and bodegas",
+      "One smarter outfit for a nicer restaurant, plus a portable charger since map apps drain a phone fast",
+    ],
+    seasonal: [
+      { season: "Spring (Apr-Jun)", tip: "Layers and a rain shell. The parks come alive and outdoor dining reopens. Mornings can still be cold enough for a jacket." },
+      { season: "Summer (Jul-Aug)", tip: "Hot, humid and the subway platforms are far hotter than the street. Light breathable fabrics, sunscreen and a water bottle, plus a layer for arctic air conditioning indoors." },
+      { season: "Autumn (Sep-Nov)", tip: "The best month-for-month weather of the year. A mid-layer plus light jacket, and boots for late autumn rain. Central Park peaks late October into early November." },
+      { season: "Winter (Dec-Mar)", tip: "Proper insulated coat, hat, gloves and waterproof boots. Wind chill between buildings is the real story, not the temperature reading. Holiday crowds and prices peak in late December." },
+    ],
+    faqs: [
+      { q: "Do I still need a MetroCard in New York?", a: "No. New MetroCard sales ended at the close of 2025 and the subway now runs on OMNY, the contactless tap-to-pay system. Just tap any contactless credit or debit card, phone wallet or smartwatch at the turnstile, and the same card on buses. There is nothing to buy in advance, and weekly fare capping means frequent riders stop being charged once they hit the seven-day threshold." },
+      { q: "Why was I charged twice for one subway ride?", a: "Almost certainly the 18-minute rule. If the same card or device is tapped again at the same station within roughly 18 minutes, the system treats it as a separate fare rather than a duplicate. It catches out couples and families who try to tap one card for two people. Everyone travelling needs their own card, phone or watch." },
+      { q: "How much should I tip in New York City?", a: "Around 18 to 20 percent at sit-down restaurants, one to two dollars per drink at a bar, 15 to 20 percent for taxis and rideshares, a few dollars per night for hotel housekeeping, and a dollar or two per bag for porters. Tipping is treated as part of the cost of service here rather than optional, and cash tips are appreciated at restaurants." },
+      { q: "Is jaywalking legal in New York now?", a: "Yes. New York City decriminalised jaywalking in late 2024, removing the previous fine, so crossing mid-block is no longer an offence. That does not make it safe: drivers, cyclists and delivery e-bikes move fast, and bikes frequently ride against traffic on one-way streets. Look both ways every time, even where you would not expect traffic." },
+      { q: "What should I actually wear in New York?", a: "Comfortable shoes above everything else, plus layers. You will walk far more than you plan to, and you will move constantly between overheated interiors and cold streets in winter, or fierce air conditioning and humid streets in summer. New Yorkers dress dark and practical; there is no dress code anywhere except a handful of upscale restaurants." },
+      { q: "Do I need travel insurance for New York?", a: "Strongly recommended if you are visiting from abroad. US healthcare is extremely expensive for visitors, and even a minor emergency room visit can run into thousands of dollars. Standard claims here are medical, trip disruption from winter storms, and theft in crowded tourist areas." },
+    ],
+  },
   london: {
     city: "London",
     country: "United Kingdom",
@@ -688,8 +736,8 @@ function CTA({ slug }) {
 }
 
 export default function DestinationPage({ slug = "tokyo" }) {
-  const page = PAGES[slug] || PAGES.tokyo;
-
+  const page = PAGES[slug] || PAGES[String(slug || "").toLowerCase()] || PAGES.tokyo;
+  
   // Set SEO meta tags + structured data on mount
   useEffect(() => {
     document.title = page.title;
