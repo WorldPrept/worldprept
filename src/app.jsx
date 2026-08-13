@@ -1042,10 +1042,15 @@ export default function WorldPrept() {
 
       {screen==="form"&&(
         <>
-          <div className="sp-row">
-            <span className="sp-pill">🚀 <strong>Early access</strong> — be among the first</span>
-            <span className="sp-pill">🌍 <strong>90+</strong> destinations</span>
-            <span className="sp-pill">🛡️ Insurance <strong>compare & quote</strong></span>
+          <div style={{background:"#FDFAF4",border:"1.5px solid rgba(26,20,16,0.12)",borderRadius:14,padding:"14px 16px",marginBottom:14}}>
+            <p style={{fontSize:"0.63rem",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"#C4623A",marginBottom:8}}>Here's what you get in 30 seconds</p>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:8}}>
+              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ 22°C &amp; rain days 4/7 — pack a shell</span>
+              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ Adapter: Type A/B</span>
+              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ ⚠️ Banned meds at customs</span>
+              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ Insurance compared</span>
+            </div>
+            <p style={{fontSize:"0.68rem",color:"#4A3F35",opacity:0.7}}>Used to prep trips to 90+ destinations · free · no signup</p>
           </div>
           <div className="card">
             <Steps cur={step} total={3}/>
