@@ -724,6 +724,33 @@ const PAGES = {
 // ── Reusable styles
 const wrap = { maxWidth: 760, margin: "0 auto", padding: "0 16px" };
 
+
+const ASIA_SLUGS = ["tokyo","bangkok","bali","singapore"];
+const PACK_URL = "https://worldprep.gumroad.com/l/asia-rules";
+
+function AsiaPack({ city }) {
+  return (
+    <section style={{ margin:"28px 0", background:INK, borderRadius:16, padding:"24px 22px", color:SAND }}>
+      <p style={{ fontSize:"0.62rem", fontWeight:800, letterSpacing:"1.5px", textTransform:"uppercase", color:T, marginBottom:9 }}>Printable guide · $12</p>
+      <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.5rem", lineHeight:1.25, marginBottom:10 }}>The Asia Trip Rules Pack</h2>
+      <p style={{ fontSize:"0.86rem", lineHeight:1.65, opacity:0.75, marginBottom:14 }}>
+        Six printable pages, one per destination — including {city}. Every rule that gets travelers fined, stopped or turned away, with tick boxes so you can check it off the night before you fly.
+      </p>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:7, marginBottom:18 }}>
+        {["Japan","South Korea","Thailand","Singapore","Bali","Every flight"].map(x => (
+          <span key={x} style={{ fontSize:"0.7rem", background:"rgba(245,239,224,0.12)", borderRadius:100, padding:"4px 10px" }}>{x}</span>
+        ))}
+      </div>
+      <a href={PACK_URL} target="_blank" rel="noopener noreferrer"
+        onClick={()=>{ try { if (typeof window !== "undefined" && typeof window.gtag === "function") window.gtag("event","product_click",{ product:"asia_rules_pack", page:city }); } catch (e) { console.error("track:", e); } }}
+        style={{ display:"inline-block", background:T, color:"#fff", padding:"13px 30px", borderRadius:100, fontWeight:700, fontSize:"0.92rem", textDecoration:"none" }}>
+        Get the pack — $12 →
+      </a>
+      <p style={{ fontSize:"0.7rem", opacity:0.55, marginTop:11 }}>Instant PDF download · print only the page you need</p>
+    </section>
+  );
+}
+
 function CTA({ slug }) {
   return (
     <a href="/" style={{ display:"block", background:INK, color:SAND, borderRadius:16, padding:"24px 22px", textDecoration:"none", textAlign:"center", margin:"28px 0" }}>
@@ -737,7 +764,7 @@ function CTA({ slug }) {
 
 export default function DestinationPage({ slug = "tokyo" }) {
   const page = PAGES[slug] || PAGES[String(slug || "").toLowerCase()] || PAGES.tokyo;
-  
+
   // Set SEO meta tags + structured data on mount
   useEffect(() => {
     document.title = page.title;
@@ -881,6 +908,8 @@ export default function DestinationPage({ slug = "tokyo" }) {
           </div>
         </section>
 
+        {ASIA_SLUGS.indexOf(page.slug) !== -1 && <AsiaPack city={page.city} />}
+
         {/* More destinations — internal links for SEO discovery */}
         <section style={{ marginBottom:24 }}>
           <h2 style={{ fontFamily:"'Playfair Display',serif", fontSize:"1.35rem", color:INK, marginBottom:14 }}>More Packing Guides</h2>
@@ -905,3 +934,4 @@ export default function DestinationPage({ slug = "tokyo" }) {
     </div>
   );
 }
+
