@@ -310,7 +310,10 @@ TRIP: ${form.destination} | ${form.depDate}→${form.retDate} (${n} nights, ${mo
 [WARNINGS_START]
 Destination rules for ${form.destination} that catch travelers out. ONLY include rules you are CERTAIN are real and current. Never invent a rule, a fine amount, or a law. If you are not certain, omit it entirely — fewer accurate warnings is far better than more.
 Cover only what applies: banned or restricted medications, prohibited food/customs items, dress codes at religious or official sites, banned devices, entry requirements (visas, travel authorisations, onward-ticket rules, tourist levies), and local laws tourists commonly break.
-2–5 bullets maximum. Format: "- ⚠️ Short rule — what can happen"
+MAXIMUM 3 bullets. Each bullet MAX 14 words. Punchy and scannable, not prose.
+Format: "- ⚠️ Item or action — what can happen"
+Good: "- ⚠️ Sudafed & Adderall — banned, can be seized at customs"
+Bad: "- ⚠️ You should be aware that certain medications including those containing pseudoephedrine are subject to import restrictions"
 Word consequences as "can be", "may be", or "up to" — never as absolutes.
 If there are no notable rules beyond ordinary travel common sense, output exactly: "- ✅ No unusual restrictions — standard travel rules apply."
 [WARNINGS_END]
@@ -1071,7 +1074,7 @@ export default function WorldPrept() {
           <p className="sub">AI-built packing lists matched to real weather, plus insurance, local events & more — for anywhere on Earth. Free, in 30 seconds.</p>
           <div className="hero-feats">
             <span className="hero-feat">🌦️ Weather-matched</span>
-            <span className="hero-feat">🛡️ Insurance built-in</span>
+            <span className="hero-feat">⚠️ Destination rules</span>
             <span className="hero-feat">✨ No login</span>
           </div>
         </div>
@@ -1289,4 +1292,3 @@ export default function WorldPrept() {
     </div>
   );
 }
-
