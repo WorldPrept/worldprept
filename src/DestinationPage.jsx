@@ -25,8 +25,8 @@ const PAGES = {
     country: "Japan",
     flag: "\ud83c\uddef\ud83c\uddf5",
     slug: "tokyo",
-    title: "What to Pack for Tokyo (2026): Banned Medications, Weather & Full List",
-    metaDesc: "Complete Tokyo packing list for 2026 \u2014 including the common medications that are illegal in Japan (Adderall, Sudafed), what customs confiscates, seasonal weather, and the essentials first-timers forget.",
+    title: "What Nobody Tells You Before Packing for Tokyo (2026)",
+    metaDesc: "What nobody tells you before packing for Tokyo in 2026 \u2014 the common medications that are illegal in Japan (Adderall, Sudafed), what customs confiscates, why the city is still cash-based, and the essentials first-timers forget.",
     intro: "Most Tokyo packing guides tell you to bring comfortable shoes. Almost none warn you that the cold medicine in your bag may be illegal in Japan \u2014 and that travelers have been detained at customs for it. This guide covers the rules that actually catch people out, plus exactly what to pack by season.",
     bestTime: "Spring (late March\u2013May) for cherry blossoms and autumn (late September\u2013November) for mild weather and fall colour. June is rainy season (tsuyu). July\u2013August is genuinely punishing \u2014 30\u201335\u00b0C with humidity that makes it feel far hotter. Winter is cold but dry and clear, and it is the cheapest, least crowded time to go.",
     weather: "Summer (Jun\u2013Aug): 30\u201335\u00b0C (86\u201395\u00b0F) with very high humidity \u2014 you will sweat through cotton, so pack quick-dry fabrics. Winter (Dec\u2013Feb): 2\u201310\u00b0C (36\u201350\u00b0F), dry and sunny, rarely snowy in the city. Spring and autumn: a comfortable 15\u201322\u00b0C (59\u201372\u00b0F). Indoor heating and air-conditioning are aggressive year-round, so layers matter more than a single heavy piece.",
@@ -59,6 +59,7 @@ const PAGES = {
       { season: "Winter (Dec\u2013Feb)", tip: "Cold, dry and clear. A warm coat, scarf and thermal base layers are enough \u2014 it rarely snows in central Tokyo. Heated indoor spaces mean you will be removing that coat constantly, so layers beat bulk." },
     ],
     faqs: [
+      { q: "What do first-time visitors to Tokyo get wrong?", a: "Three things. They bring medication that is illegal in Japan without checking the active ingredient. They assume cards work everywhere, when smaller restaurants, shrines and older shops are frequently cash-only. And they underestimate the walking \u2014 15,000 to 25,000 steps a day is normal, mostly in shoes they will be removing at temples, ryokan and some restaurants." },
       { q: "Can I bring my prescription medication to Japan?", a: "It depends entirely on the active ingredient. Adderall and Vyvanse are banned outright with no exemption, even with a prescription. Ritalin and Concerta require a Yunyu Kakunin-sho import certificate obtained before you travel. Many other prescriptions are fine in personal quantities. Always check the ingredient against Japan's import rules before flying, and carry medication in its original labelled packaging with a copy of your prescription." },
       { q: "Is Sudafed illegal in Japan?", a: "Products containing pseudoephedrine \u2014 the active ingredient in Sudafed and many cold and flu tablets \u2014 are prohibited from being brought into Japan and can be seized at customs. Check the ingredient list on any cold medicine before you pack it, and buy equivalent remedies at a Japanese pharmacy after you arrive instead." },
       { q: "Do I need cash in Tokyo, or are cards accepted?", a: "Bring cash. Japan is far more cash-based than most visitors expect. Convenience stores, chains and major restaurants take cards, but smaller restaurants, shrines, markets and older shops are frequently cash-only. Withdraw yen from a 7-Eleven or Japan Post ATM, which reliably accept foreign cards." },
@@ -259,8 +260,8 @@ const PAGES = {
     country: "Thailand",
     flag: "🇹🇭",
     slug: "bangkok",
-    title: "What to Pack for Bangkok (2026): Vape Ban, Temple Rules & Full List",
-    metaDesc: "Complete Bangkok packing list for 2026 — including Thailand's strict vape ban (arrests and heavy fines), temple dress codes, what sunscreen is banned in marine parks, and heat-ready essentials.",
+    title: "What Nobody Warns You About Packing for Bangkok (2026)",
+    metaDesc: "What nobody warns you about packing for Bangkok in 2026 \u2014 Thailand's strict vape ban (arrests and heavy fines), the sunscreens banned in Thai marine parks, temple dress codes, and what locals do about the heat.",
     intro: "Bangkok guides tell you to pack light clothing. Very few mention that the vape in your pocket is illegal in Thailand — travelers have been arrested and fined for possession — or that certain sunscreens are banned in Thai marine parks. Here is what to leave at home, what the temples require, and the full heat-ready list.",
     bestTime: "November–February is the cool, dry sweet spot at 25–32°C with low humidity. March–May is brutally hot (well over 35°C). June–October is rainy season — still very visitable, with short heavy downpours rather than washed-out days.",
     weather: "Hot year-round. Cool season: 25–32°C (77–90°F). Hot season: 33–38°C (91–100°F) and humid. Rainy season: 28–34°C with intense afternoon storms. Indoors, malls and the BTS are aggressively air-conditioned — a light layer stops the shivers.",
@@ -292,6 +293,7 @@ const PAGES = {
       { season: "Rainy Season (Jun–Oct)", tip: "Quick-dry clothing, a compact umbrella and sandals that survive water. Storms are heavy but short — mornings are usually clear, and the city empties of crowds." },
     ],
     faqs: [
+      { q: "What do locals in Bangkok do that tourists do not?", a: "They carry a light layer for the arctic air conditioning on the BTS and in malls, they keep a temple-appropriate outfit ready rather than being turned away at the Grand Palace, they use the meter or a ride app instead of accepting fixed tourist prices, and they never bring a vape into the country. They also drink bottled water and treat banknotes carefully, since currency carries the King image." },
       { q: "Can I bring my vape to Thailand?", a: "No. E-cigarettes and vaping products are illegal in Thailand — banned from import, sale and possession. Tourists have been stopped, fined heavily and even arrested, and police do check in tourist and nightlife areas. There is no personal-use exemption. Leave every vaping product at home and buy nicotine gum or patches instead if you need them." },
       { q: "What sunscreen is banned in Thailand?", a: "Sunscreens containing oxybenzone, octinoxate, 4-methylbenzylidene camphor (4-MBC) or butylparaben are banned in Thailand's marine national parks because they damage coral. If your trip includes islands, snorkeling or diving, pack a mineral (zinc/titanium) reef-safe sunscreen — it protects you and avoids a fine." },
       { q: "What should I wear to temples in Bangkok?", a: "Shoulders and knees covered for all visitors, nothing see-through, and shoes off inside buildings. The Grand Palace is the strictest — guards refuse entry for shorts, tank tops and leggings daily. A light pair of trousers and a t-shirt or covered top solves it; carrying a scarf adds flexibility." },
@@ -352,13 +354,13 @@ const PAGES = {
     country: "Italy",
     flag: "\ud83c\uddee\ud83c\uddf9",
     slug: "rome",
-    title: "What to Pack for Rome (2026): The Fines Tourists Don't Expect",
-    metaDesc: "Complete Rome packing list for 2026 — the fines for sitting on the Spanish Steps, wading in fountains and rolling luggage on monuments, St Peter's dress code, and what to bring for cobblestones and heat.",
+    title: "Packing Tips for Rome Like a Local (2026): The Fines Tourists Don't Expect",
+    metaDesc: "How to pack for Rome like a local in 2026 \u2014 the fines for sitting on the Spanish Steps, wading in fountains and rolling luggage on historic stairs, St Peter's dress code, and what locals carry for the cobblestones.",
     intro: "Rome fines tourists for things that feel completely harmless: sitting down on the Spanish Steps, dipping your feet in a fountain, rolling a suitcase down historic stairs. Officials patrol with whistles and the penalties are real. Pack for the rules and the cobblestones and you will have a far smoother trip.",
     bestTime: "April to early June and late September to October: warm, walkable, and the queues are survivable. July and August are hot and heaving. Winter is mild by European standards, cheap, and the Vatican is blissfully quiet.",
     weather: "Summer runs 28 to 36 C (82 to 97 F) with strong sun and little shade at the ruins. Winter sits around 5 to 14 C (41 to 57 F), damp with occasional rain. Spring and autumn are 15 to 25 C (59 to 77 F) and close to perfect for walking. Churches and museums are cool inside even in August, so a layer is useful year-round.",
     warning: {
-      title: "The Rome fines most visitors have never heard of",
+      title: "How to not get fined like a tourist in Rome",
       body: "These are city ordinances designed to protect monuments, and they are actively enforced with patrols and whistles. Every one of them is something a visitor might do without thinking.",
       items: [
         "Sitting on the Spanish Steps has been prohibited since 2019, with fines reported from around 250 to 400 euros and higher for mess or damage. You may walk up and down and take photos, but not sit.",
@@ -386,6 +388,7 @@ const PAGES = {
       { season: "Winter (Nov-Mar)", tip: "Mild but damp. A warm coat, waterproof shoes and an umbrella. Queues shrink dramatically and hotel prices drop." },
     ],
     faqs: [
+      { q: "How do I avoid getting fined like a tourist in Rome?", a: "Do not sit on the Spanish Steps, do not put your feet in any historic fountain, carry your suitcase on historic stairs instead of rolling it, keep a shirt on in the centre, and do not eat leaning against monuments. Locals sit on benches or in cafes, refill bottles at the free nasoni fountains, and carry a scarf for St Peter basilica." },
       { q: "Can you sit on the Spanish Steps in Rome?", a: "No. Sitting or lying on the Spanish Steps has been prohibited since 2019 to protect the 18th-century marble, with fines reported from around 250 euros and rising to around 400 for mess or damage. Officials patrol and blow whistles at people who sit down. You can walk up and down and take photos freely, and there are benches in the piazza below." },
       { q: "What are the fines for touching fountains in Rome?", a: "Wading, swimming, showering or dipping your feet in historic fountains carries fines reported around 450 euros, and coin fishing is treated as theft. Tossing a coin over your shoulder at the Trevi Fountain is the tradition and is fine. Since February 2026 a small ticket is needed to descend to the close-up fountain area, while the free view from the piazza above remains." },
       { q: "What is the dress code for St Peter's Basilica?", a: "Shoulders and knees covered for all visitors, including men, and no see-through fabrics. Security turns people away daily in summer, and there is no exception for heat. A light scarf plus linen trousers or a longer skirt solves it without cooking you." },
@@ -539,13 +542,13 @@ const PAGES = {
     country: "Portugal",
     flag: "\ud83c\uddf5\ud83c\uddf9",
     slug: "lisbon",
-    title: "What to Pack for Lisbon (2026): The Shoes Rule & Full List",
-    metaDesc: "Complete Lisbon packing list for 2026 — why the city's polished calcada pavement is genuinely slippery, the tram 28 pickpocket problem, the fake-drug scam, and what to bring for hills and sun.",
+    title: "Packing Tips for Navigating Lisbon Like a Local (2026)",
+    metaDesc: "How to pack for Lisbon like a local in 2026 \u2014 why the polished calcada pavement is genuinely slippery, the tram 28 pickpocket problem, the couvert charge nobody explains, and what locals actually wear on the hills.",
     intro: "Lisbon's signature hazard is its own pavement. The city is paved in polished limestone that turns skating-rink slick in light rain, and it is all hills. Add the most pickpocketed tram in Europe and a scam aimed squarely at tourists, and there are a few very specific things to pack.",
     bestTime: "March to May and September to October: warm, bright and comfortable for climbing hills. July and August are hot and crowded. Winter is mild and cheap, with more rain but plenty of sun between showers.",
     weather: "Summer runs 25 to 32 C (77 to 90 F) with strong Atlantic sun and cool evenings by the river. Winter sits around 9 to 16 C (48 to 61 F), rainy but rarely cold. Spring and autumn are 16 to 24 C (61 to 75 F). There is almost always a breeze off the Tejo, which makes the heat manageable and the evenings cooler than you expect.",
     warning: {
-      title: "What nobody tells you before visiting Lisbon",
+      title: "How to not stand out as a tourist in Lisbon",
       body: "One of these is about your footing, two are about your belongings. All three are things locals simply know.",
       items: [
         "The calcada portuguesa pavement, those beautiful patterned limestone tiles, becomes genuinely slippery when even slightly wet. Smooth-soled shoes are a real fall risk on the steep streets.",
@@ -573,6 +576,7 @@ const PAGES = {
       { season: "Winter (Nov-Feb)", tip: "Mild but wet, and wet means slippery. Waterproof grippy shoes and a rain jacket. Sunny days between fronts are gorgeous and empty." },
     ],
     faqs: [
+      { q: "How do I get around Lisbon like a local?", a: "Wear grippy rubber soles \u2014 locals do, because the polished calcada pavement is genuinely slippery and the city is steep. Use the funiculars and the Santa Justa lift as transport rather than attractions, ride tram 28 early before it fills, keep a zipped bag in front of you, eat one or two streets back from the tourist strips, and send back the couvert if you do not want to pay for it." },
       { q: "What shoes should I wear in Lisbon?", a: "Shoes with grippy rubber soles and no heels. Lisbon is paved in polished limestone calcada that becomes seriously slick when wet, and the city is built on steep hills. Locals wear practical soles for exactly this reason. Smooth leather soles, flip-flops and heels are the most common cause of tourist falls here." },
       { q: "Is tram 28 safe, and how do I avoid pickpockets?", a: "It is safe in the sense that theft is non-violent, but it is the most pickpocketed spot in Lisbon. Thieves work the crush at the doors and at stops. Ride it early in the morning when it is emptier, keep a zipped bag in front of you, put nothing in back pockets, and stay alert whenever the tram fills or empties." },
       { q: "What is the fake drug scam in Lisbon?", a: "Street sellers approach tourists around Baixa and nightlife areas offering drugs that are actually herbs or crushed tablets. It is a straightforward rip-off aimed at visitors, and engaging can also put you in an awkward position with police. Simply keep walking; a firm no is enough." },
@@ -934,4 +938,3 @@ export default function DestinationPage({ slug = "tokyo" }) {
     </div>
   );
 }
-
