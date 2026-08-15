@@ -307,6 +307,14 @@ function buildPrompt(form) {
 
 TRIP: ${form.destination} | ${form.depDate}→${form.retDate} (${n} nights, ${monRange}) | ${form.tripType} | ${form.activities||"sightseeing"} | ${adults} adults${hasKids?` + ${numKids} child${numKids>1?"ren":""}`:""} | ${lugNote}
 
+[WARNINGS_START]
+Destination rules for ${form.destination} that catch travelers out. ONLY include rules you are CERTAIN are real and current. Never invent a rule, a fine amount, or a law. If you are not certain, omit it entirely — fewer accurate warnings is far better than more.
+Cover only what applies: banned or restricted medications, prohibited food/customs items, dress codes at religious or official sites, banned devices, entry requirements (visas, travel authorisations, onward-ticket rules, tourist levies), and local laws tourists commonly break.
+2–5 bullets maximum. Format: "- ⚠️ Short rule — what can happen"
+Word consequences as "can be", "may be", or "up to" — never as absolutes.
+If there are no notable rules beyond ordinary travel common sense, output exactly: "- ✅ No unusual restrictions — standard travel rules apply."
+[WARNINGS_END]
+
 [PACKING_START]
 Line 1 — weather only:
 🌤️ [City], [Month]: [temp range °C/°F], [2-3 word condition]
@@ -359,7 +367,7 @@ Format: "- tip"
 
 function parseAll(raw) {
   const get = tag => { const m=raw.match(new RegExp(`\\[${tag}_START\\]([\\s\\S]*?)\\[${tag}_END\\]`)); return m?m[1].trim():""; };
-  return { packing:get("PACKING"), insurance:get("INSURANCE"), events:get("EVENTS") };
+  return { warnings:get("WARNINGS"), packing:get("PACKING"), insurance:get("INSURANCE"), events:get("EVENTS") };
 }
 
 const CSS = `
@@ -556,6 +564,37 @@ function GearCard({ item, owned, onToggle }) {
         <p style={{fontSize:"0.68rem",color:INKL,lineHeight:1.4,flex:1}}>{item.why}</p>
         <span style={{fontSize:"0.64rem",fontWeight:700,color:owned?"#2C7873":T}}>{owned?"✓ Owned":`${item.price} — View ↗`}</span>
       </a>
+    </div>
+  );
+}
+
+function RulesBox({ text, destination }) {
+  if (!text) return null;
+  const lines = text.split("\n").map(l => l.replace(/^[-•]\s*/, "").trim()).filter(Boolean);
+  if (!lines.length) return null;
+  const city = destination ? destination.split(",")[0].trim() : "this destination";
+  const ASIA_TERMS = ["japan","tokyo","osaka","kyoto","korea","seoul","thailand","bangkok","phuket","chiang mai","singapore","bali","indonesia","jakarta","ubud","denpasar"];
+  const dl = (destination || "").toLowerCase();
+  const isAsia = ASIA_TERMS.some(function(t){ return dl.indexOf(t) !== -1; });
+  return (
+    <div style={{marginBottom:22,padding:"16px 18px",borderRadius:14,background:"rgba(196,98,58,0.07)",border:"1.5px solid rgba(196,98,58,0.32)"}}>
+      <p style={{fontSize:"0.95rem",fontWeight:800,color:"#1A1410",marginBottom:9}}>Before you pack for {city}</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:11}}>
+        {lines.map((l,i)=>(
+          <p key={"w"+i} style={{fontSize:"0.85rem",color:"#4A3F35",lineHeight:1.55}}>{l}</p>
+        ))}
+      </div>
+      {isAsia && (
+        <a href="https://worldprep.gumroad.com/l/asia-rules" target="_blank" rel="noopener noreferrer"
+          onClick={()=>{ try { if (typeof window !== "undefined" && typeof window.gtag === "function") window.gtag("event","product_click",{ product:"asia_rules_pack", page:"results_warnings" }); } catch (e) { console.error("track:", e); } }}
+          style={{display:"block",marginBottom:11,padding:"11px 13px",borderRadius:10,background:"#1A1410",color:"#F5EFE0",textDecoration:"none"}}>
+          <span style={{fontSize:"0.8rem",fontWeight:700}}>Full printable rules for Japan, Korea, Thailand, Singapore &amp; Bali →</span>
+          <span style={{display:"block",fontSize:"0.68rem",opacity:0.6,marginTop:3}}>The Asia Trip Rules Pack · $12 · one printable page per destination</span>
+        </a>
+      )}
+      <p style={{fontSize:"0.68rem",color:"#4A3F35",opacity:0.65,lineHeight:1.5}}>
+        Rules change and enforcement varies — verify anything critical with official sources. <a href="/tsa-rules" style={{color:"#C4623A",fontWeight:700}}>Full carry-on &amp; TSA rules →</a>
+      </p>
     </div>
   );
 }
@@ -919,7 +958,7 @@ export default function WorldPrept() {
   const [screen,setScreen]=useState("form");
   const [step,setStep]=useState(1);
   const [form,setForm]=useState(INIT_FORM);
-  const [result,setResult]=useState({packing:"",insurance:"",events:""});
+  const [result,setResult]=useState({warnings:"",packing:"",insurance:"",events:""});
   const [tab,setTab]=useState("packing");
   const [error,setError]=useState("");
   const [dots,setDots]=useState(1);
@@ -1009,7 +1048,7 @@ export default function WorldPrept() {
     }
   };
 
-  const reset=()=>{setScreen("form");setStep(1);setForm(INIT_FORM);setResult({packing:"",insurance:"",events:""});setTab("packing");setShowEmail(false);setShowShare(false);setChecked({});setOwned({});setError("");};
+  const reset=()=>{setScreen("form");setStep(1);setForm(INIT_FORM);setResult({warnings:"",packing:"",insurance:"",events:""});setTab("packing");setShowEmail(false);setShowShare(false);setChecked({});setOwned({});setError("");};
   const openTrip=(t)=>{ setForm(t.form); setResult(t.result); setChecked(t.checked||{}); setOwned(t.owned||{}); setTab("packing"); setScreen("results"); window.scrollTo(0,0); };
   const deleteTrip=(id)=>{ setSavedTrips(prev=>{ const next=prev.filter(t=>t.id!==id); saveTrips(next); return next; }); };
   const downloadPDF=()=>{ const ok=exportPDF(form,result,checked); if(ok){ setJustSaved(true); setTimeout(()=>setJustSaved(false),2000); } };
@@ -1042,15 +1081,10 @@ export default function WorldPrept() {
 
       {screen==="form"&&(
         <>
-          <div style={{background:"#FDFAF4",border:"1.5px solid rgba(26,20,16,0.12)",borderRadius:14,padding:"14px 16px",marginBottom:14}}>
-            <p style={{fontSize:"0.63rem",fontWeight:800,letterSpacing:"1px",textTransform:"uppercase",color:"#C4623A",marginBottom:8}}>Here's what you get in 30 seconds</p>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:8}}>
-              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ 22°C &amp; rain days 4/7 — pack a shell</span>
-              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ Adapter: Type A/B</span>
-              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ ⚠️ Banned meds at customs</span>
-              <span style={{fontSize:"0.72rem",color:"#4A3F35",background:"rgba(26,20,16,0.05)",borderRadius:8,padding:"4px 8px"}}>✓ Insurance compared</span>
-            </div>
-            <p style={{fontSize:"0.68rem",color:"#4A3F35",opacity:0.7}}>Used to prep trips to 90+ destinations · free · no signup</p>
+          <div className="sp-row">
+            <span className="sp-pill">⚡ Ready in <strong>30 seconds</strong> — no signup</span>
+            <span className="sp-pill">🌍 <strong>90+</strong> destinations</span>
+            <span className="sp-pill">🛡️ Insurance <strong>compare & quote</strong></span>
           </div>
           <div className="card">
             <Steps cur={step} total={3}/>
@@ -1243,7 +1277,7 @@ export default function WorldPrept() {
             <button className={`tab${tab==="insurance"?" on":""}`} onClick={()=>setTab("insurance")}>🛡️ Insurance</button>
           </div>
           <div className="panel">
-            {tab==="packing"&&<><PackingList text={result.packing} checked={checked} setChecked={setChecked} onShare={openShare}/><GearSection form={form} owned={owned} setOwned={setOwned}/><InsurancePrompt form={form} onGo={()=>{setTab("insurance");window.scrollTo(0,0);}}/></>}
+            {tab==="packing"&&<><RulesBox text={result.warnings} destination={form.destination}/><PackingList text={result.packing} checked={checked} setChecked={setChecked} onShare={openShare}/><GearSection form={form} owned={owned} setOwned={setOwned}/><InsurancePrompt form={form} onGo={()=>{setTab("insurance");window.scrollTo(0,0);}}/></>}
             {tab==="events"&&<EventsView text={result.events} form={form}/>}
             {tab==="insurance"&&<InsuranceView text={result.insurance} recIds={insRec} form={form}/>}
           </div>
