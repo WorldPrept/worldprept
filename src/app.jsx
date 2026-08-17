@@ -330,7 +330,7 @@ Packing list targeting ~${target} items. Headers:
 💻 Tech & Gear
 🎯 Trip Extras${hasKids?`\n👶 Kids (${numKids} child${numKids>1?"ren":""})`:``}
 
-RULES: Short noun phrases ONLY. Max 5 words. NO explanations. NO parentheses.
+FORMAT (critical): every item on its own line starting with "- " (dash then space). Headers have NO dash.\nRULES: Short noun phrases ONLY. Max 5 words. NO explanations. NO parentheses.
 Good: "Linen shirts ×5" "Rain jacket" "SPF50 sunscreen"
 Bad: "Shirts (for the heat)" "Remember your passport"
 Quantities: ${qtyNote}
@@ -499,7 +499,8 @@ function PackingList({ text, checked, setChecked, onShare }) {
   if (!text) return null;
   const allLines = text.split("\n");
   const BULLET = /^\s*[-•*\u2013\u2022]\s+/;
-  const total = allLines.filter(l=>BULLET.test(l)).length;
+  const isHdr = (l) => /^[\u{1F9E5}\u{1F4C4}\u{1F9F4}\u{1F48A}\u{1F4BB}\u{1F3AF}\u{1F476}]/u.test(l) || l.trim().startsWith("\u{1F324}");
+  const total = allLines.filter(l=>l.trim() && !isHdr(l)).length;
   const done  = Object.values(checked).filter(Boolean).length;
   return (
     <div>
@@ -530,8 +531,9 @@ function PackingList({ text, checked, setChecked, onShare }) {
           const isKids=line.startsWith("👶");
           return <p key={key} className={`sec-hdr${isKids?" kids":""}`}>{line}</p>;
         }
-        if (BULLET.test(line)) {
+        {
           const item=line.replace(BULLET,"").trim();
+          if (!item) return null;
           const ticked=!!checked[key];
           return (
             <div key={key} className="check-row" onClick={()=>setChecked(p=>({...p,[key]:!p[key]}))}>
@@ -1297,4 +1299,3 @@ export default function WorldPrept() {
     </div>
   );
 }
-
