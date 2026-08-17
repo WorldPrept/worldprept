@@ -219,7 +219,7 @@ function exportPDF(form, result, checked) {
     if (!line.trim()) return;
     if (line.startsWith("🌤️")) html += `<div class="weather">${esc(line)}</div>`;
     else if (line.match(/^[🧥📄🧴💊💻🎯👶]/u)) html += `<h3>${esc(line)}</h3>`;
-    else if (line.startsWith("- ")) { const t=checked[`pk${i}`]?"☑":"☐"; html += `<div class="item">${t} ${esc(line.slice(2))}</div>`; }
+    else if (/^\s*[-\u2022*\u2013]\s+/.test(line)) { const t=checked[`pk${i}`]?"☑":"☐"; html += `<div class="item">${t} ${esc(line.replace(/^\s*[-\u2022*\u2013]\s+/,""))}</div>`; }
   });
   const win = window.open("", "_blank");
   if (!win) return false;
@@ -286,7 +286,7 @@ function buildShareText(form, packingText, checked) {
   const rows=[];
   packingText.split("\n").forEach((line,i)=>{
     if (!line.trim()) return;
-    if (line.startsWith("- ")) rows.push(`${checked[`pk${i}`]?"✅":"⬜"} ${line.slice(2).trim()}`);
+    if (/^\s*[-\u2022*\u2013]\s+/.test(line)) rows.push(`${checked[`pk${i}`]?"✅":"⬜"} ${line.replace(/^\s*[-\u2022*\u2013]\s+/,"").trim()}`);
     else if (line.match(/^[🌤️🧥📄🧴💊💻🎯👶]/u)) rows.push(`\n${line}`);
   });
   return `✈️ WorldPrept — ${form.destination}\n${fmt(form.depDate)} – ${fmt(form.retDate)} | ${form.tripType}\n${rows.join("\n")}\n\nBuilt with WorldPrept`;
@@ -311,7 +311,7 @@ TRIP: ${form.destination} | ${form.depDate}→${form.retDate} (${n} nights, ${mo
 Destination rules for ${form.destination} that catch travelers out. ONLY include rules you are CERTAIN are real and current. Never invent a rule, a fine amount, or a law. If you are not certain, omit it entirely — fewer accurate warnings is far better than more.
 Cover only what applies: banned or restricted medications, prohibited food/customs items, dress codes at religious or official sites, banned devices, entry requirements (visas, travel authorisations, onward-ticket rules, tourist levies), and local laws tourists commonly break.
 MAXIMUM 3 bullets. Each bullet MAX 14 words. Punchy and scannable, not prose.
-Format: "- ⚠️ Item or action — what can happen"
+Format each line as: - ⚠️ Item or action — what can happen
 Good: "- ⚠️ Sudafed & Adderall — banned, can be seized at customs"
 Bad: "- ⚠️ You should be aware that certain medications including those containing pseudoephedrine are subject to import restrictions"
 Word consequences as "can be", "may be", or "up to" — never as absolutes.
@@ -498,7 +498,8 @@ function Steps({ cur, total }) {
 function PackingList({ text, checked, setChecked, onShare }) {
   if (!text) return null;
   const allLines = text.split("\n");
-  const total = allLines.filter(l=>l.startsWith("- ")).length;
+  const BULLET = /^\s*[-•*\u2013\u2022]\s+/;
+  const total = allLines.filter(l=>BULLET.test(l)).length;
   const done  = Object.values(checked).filter(Boolean).length;
   return (
     <div>
@@ -529,8 +530,8 @@ function PackingList({ text, checked, setChecked, onShare }) {
           const isKids=line.startsWith("👶");
           return <p key={key} className={`sec-hdr${isKids?" kids":""}`}>{line}</p>;
         }
-        if (line.startsWith("- ")) {
-          const item=line.slice(2).trim();
+        if (BULLET.test(line)) {
+          const item=line.replace(BULLET,"").trim();
           const ticked=!!checked[key];
           return (
             <div key={key} className="check-row" onClick={()=>setChecked(p=>({...p,[key]:!p[key]}))}>
@@ -667,7 +668,7 @@ function InsuranceView({ text, recIds, form }) {
           if (line.startsWith("🏢")) return null;
           return <p key={i} className="sec-hdr">{line}</p>;
         }
-        if (line.startsWith("- ")||line.startsWith("• ")) return (
+        if (/^\s*[-\u2022*\u2013]\s+/.test(line)) return (
           <div key={i} style={{display:"flex",gap:8,padding:"4px 0"}}>
             <span style={{color:"#2C7873",flexShrink:0,fontSize:"0.55rem",marginTop:5}}>●</span>
             <span style={{fontSize:"0.875rem",color:INKL,lineHeight:1.6}}>{line.replace(/^[-•]\s*/,"")}</span>
@@ -743,8 +744,8 @@ function EventsView({ text, form }) {
           </div>
           {(text||"").split("\n").filter(l=>l.trim()).map((line,i)=>{
             if (line.match(/^[🎉🗓️🌍🍽️]/u)) return <p key={i} className="sec-hdr">{line}</p>;
-            if (line.startsWith("- ")) {
-              const parts=line.slice(2).split("—");
+            if (/^\s*[-\u2022*\u2013]\s+/.test(line)) {
+              const parts=line.replace(/^\s*[-\u2022*\u2013]\s+/,"").split("—");
               return (
                 <div key={i} style={{display:"flex",gap:9,padding:"5px 0",alignItems:"flex-start"}}>
                   <span style={{color:T,flexShrink:0,fontSize:"0.55rem",marginTop:6}}>●</span>
@@ -807,7 +808,7 @@ function ShareModal({ text, form, result, checked, onClose }) {
 
   // Pull a weather line + counts for the card
   const weather=(result?.packing||"").split("\n").find(l=>l.startsWith("🌤️"))?.replace("🌤️","").trim()||"";
-  const totalItems=(result?.packing||"").split("\n").filter(l=>l.startsWith("- ")).length;
+  const totalItems=(result?.packing||"").split("\n").filter(l=>/^\s*[-\u2022*\u2013]\s+/.test(l)).length;
   const packedItems=Object.values(checked||{}).filter(Boolean).length;
   const city=(form?.destination||"").split(",")[0];
   const nightsCount=nights(form?.depDate,form?.retDate);
@@ -1025,7 +1026,7 @@ export default function WorldPrept() {
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
           model:"claude-sonnet-4-6",
-          max_tokens:4000,
+          max_tokens:6000,
           system:buildPrompt({...form,duration:dur}),
           messages:[{role:"user",content:`Generate the WorldPrept pack for ${form.destination}, ${form.depDate} to ${form.retDate}.`}]
         })
@@ -1066,8 +1067,12 @@ export default function WorldPrept() {
       <div className="hero-band">
         <div className="hdr">
           <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:16}}>
-            <span className="wp-mark"/>
-            <span className="wp-name" style={{fontSize:"1.05rem",color:"#F5EFE0"}}>WorldPrept</span>
+            <a href="/" onClick={(e)=>{ e.preventDefault(); reset(); window.scrollTo(0,0); }}
+              style={{display:"inline-flex",alignItems:"center",gap:8,textDecoration:"none",cursor:"pointer"}}
+              aria-label="WorldPrept home">
+              <span className="wp-mark"/>
+              <span className="wp-name" style={{fontSize:"1.05rem",color:"#F5EFE0"}}>WorldPrept</span>
+            </a>
           </div>
           <div className="badge"><span className="dot"/>Your trip, perfectly prepped</div>
           <h1>Pack like you've<br/>been there <span>before</span>.</h1>
@@ -1248,11 +1253,11 @@ export default function WorldPrept() {
               <button className="b-share" onClick={openShare}>📋 Share</button>
               <button className="b-share" onClick={downloadPDF}>{justSaved?"✓ Saved":"📄 PDF"}</button>
               <button className="b-alert" onClick={()=>setShowEmail(true)}>🔔 Alerts</button>
-              <button className="b-ghost" onClick={reset}>← New</button>
+              <button className="b-ghost" onClick={()=>{ reset(); window.scrollTo(0,0); }}>← Start over</button>
             </div>
           </div>
           {(()=>{
-            const totalC=(result.packing||"").split("\n").filter(l=>l.startsWith("- ")).length;
+            const totalC=(result.packing||"").split("\n").filter(l=>/^\s*[-•*\u2013\u2022]\s+/.test(l)).length;
             const packedC=Object.values(checked).filter(Boolean).length;
             const rd=tripReadiness(form.depDate,form.retDate,packedC,totalC);
             if(!rd) return null;
@@ -1292,3 +1297,4 @@ export default function WorldPrept() {
     </div>
   );
 }
+
