@@ -303,7 +303,7 @@ function buildPrompt(form) {
   const monRange= depMon===retMon?depMon:`${depMon}–${retMon}`;
   const target  = {backpack:25,carry_only:35,carry_checked:50,two_checked:65,three_checked:80,four_checked:90}[form.luggage]||50;
   const qtyNote = adults>1?`per person e.g. "T-shirts ×${Math.ceil(n/2)} each"`:`e.g. "T-shirts ×${Math.min(Math.ceil(n*0.7)+1,10)}"`;
-  return `You are WorldPrept AI. Respond with EXACTLY three sections using the markers.
+  return `You are WorldPrept AI. Respond with EXACTLY four sections using the markers below, in this order: WARNINGS, PACKING, INSURANCE, EVENTS. Every section must be fully completed — never leave a section or a header empty.
 
 TRIP: ${form.destination} | ${form.depDate}→${form.retDate} (${n} nights, ${monRange}) | ${form.tripType} | ${form.activities||"sightseeing"} | ${adults} adults${hasKids?` + ${numKids} child${numKids>1?"ren":""}`:""} | ${lugNote}
 
