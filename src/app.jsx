@@ -1273,6 +1273,16 @@ export default function WorldPrept() {
       )}
 
       {screen==="results"&&(
+        <button onClick={()=>{ setScreen("form"); setStep(3); window.scrollTo(0,0); }}
+          aria-label="Back to trip details"
+          style={{position:"fixed",top:14,left:14,zIndex:900,display:"flex",alignItems:"center",gap:6,
+                  padding:"10px 16px",borderRadius:100,border:"1.5px solid rgba(26,20,16,0.15)",
+                  background:"#FDFAF4",color:"#1A1410",fontSize:"0.85rem",fontWeight:700,
+                  cursor:"pointer",boxShadow:"0 2px 10px rgba(26,20,16,0.12)"}}>
+          ← Back
+        </button>
+      )}
+      {screen==="results"&&(
         <div className="wrap">
           <div className="tripbar">
             <div>
