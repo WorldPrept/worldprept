@@ -994,6 +994,34 @@ export default function WorldPrept() {
   },[screen,result,checked,owned]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(()=>{ mountedRef.current=true; return()=>{ mountedRef.current=false; }; },[]);
+
+  // ── Browser / Android hardware back button support
+  const navRef = useRef({ screen:"form", step:1 });
+  useEffect(()=>{ navRef.current = { screen, step }; },[screen,step]);
+  useEffect(()=>{
+    try {
+      if (typeof window === "undefined") return;
+      window.history.replaceState({ wp:"home" }, "");
+      const onPop = () => {
+        const st = navRef.current;
+        if (st.screen === "results" || st.screen === "loading") {
+          setScreen("form"); setStep(3); window.scrollTo(0,0);
+          window.history.pushState({ wp:"form" }, "");
+        } else if (st.step > 1) {
+          setStep(st.step - 1); window.scrollTo(0,0);
+          window.history.pushState({ wp:"form" }, "");
+        }
+      };
+      window.addEventListener("popstate", onPop);
+      return () => window.removeEventListener("popstate", onPop);
+    } catch (e) { console.error("nav:", e); }
+  },[]);
+  useEffect(()=>{
+    try {
+      if (typeof window === "undefined") return;
+      if (screen === "results" || step > 1) window.history.pushState({ wp:screen+step }, "");
+    } catch (e) { console.error("nav push:", e); }
+  },[screen, step]);
   useEffect(()=>{
     if(screen==="loading") dotsRef.current=setInterval(()=>{ if(mountedRef.current) setDots(d=>d===3?1:d+1); },500);
     else clearInterval(dotsRef.current);
